@@ -1,0 +1,3 @@
+DB_INFO = ('localhost', 'user', 'pass', 'steemexplorer')
+PRIVATE_POSTING_KEY = "...
+NODES=[]

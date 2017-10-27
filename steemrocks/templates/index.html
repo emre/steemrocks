@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div id="pad-wrapper">
+    <div class="col-md-6" style="margin-left: auto; margin-right: auto; float:none;">
+    <div class="panel panel-default">
+    <div class="panel-heading"><strong>Steem Activity Feed</strong>  </div>
+    <div class="panel-body no-padding">
+        <div class="ibox-content profile-content">
+            <div id="search-box">
+                <form method="GET">
+                <input placeholder="Username" name="username">
+                <button class="ui icon button massive" type="submit">
+                Search
+                </form>
+                </button>
+            </div>
+
+
+        </div>
+    </div>
+    </div>
+    </div>
+
+
+
+{% endblock %}
