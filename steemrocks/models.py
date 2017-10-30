@@ -93,9 +93,12 @@ class Operation(object):
                 return Comment(self.raw_data)
         elif self.type == "custom_json":
             raw_data = json.loads(self.raw_data["json"])
-            return CustomJson(
-                raw_data[0], raw_data[1], account=self.account
-            ).get_concrete_operation()
+            if raw_data and len(raw_data) == 2:
+                return CustomJson(
+                    raw_data[0], raw_data[1], account=self.account
+                ).get_concrete_operation()
+            else:
+                logger.error(raw_data)
         elif self.type == "transfer":
             return Transfer(
                 self.raw_data,
