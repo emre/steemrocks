@@ -1,8 +1,7 @@
 # steemrocks
 Activity feed for steem accounts
 
-#### Installation and Running
-
+##### Installation and Running
 ```
 $ virtualenv -p python3 steemrocks-env
 $ source steemrocks-env/bin/activate
@@ -12,9 +11,17 @@ $ vim steemrocks/local_settings.py # edit accordingly
 $ pip install -r requirements.txt
 ```
 
+#### Database import
+
+Database creation queries located under the sql directory. Just import it
+to your mySQL database.
+```
+mysql -u username -p database_name < sql/base.sql
+
+```
 Installation is done. steemrocks has two seperate processes.
 
-### Transaction Listener Process
+##### Transaction Listener Process
 ```
 $ FLASK_APP=app.py flask listen_transactions
 ```
@@ -28,9 +35,10 @@ You should see something like that:
 
 <img src="https://i.hizliresim.com/Oyo6WP.png">
 
-### Server Process
+##### Server Process
 
 In development environment:
+
 ```
 cd [steemrocks_directory]
 FLASK_APP=app.py run
@@ -41,4 +49,5 @@ For production, you can use gunicorn:
 ```
 /gunicorn steemrocks.app:app --bind 0.0.0.0:[PORT_NUMBER]
 ```
+
 

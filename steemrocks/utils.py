@@ -25,6 +25,5 @@ def get_db():
 def get_steem_conn():
     global _steem_connection
     if not _steem_connection:
-        _steem_connection = Steem(
-            keys=[settings.PRIVATE_POSTING_KEY], nodes=settings.NODES)
+        _steem_connection = Steem(nodes=settings.NODES)
     return _steem_connection
