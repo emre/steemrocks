@@ -1,18 +1,25 @@
-from . import settings
-from steem import Steem
 import pymysql
+from flask import g
+from steem import Steem
 
+from . import settings
 
-_db_connection = None
 _steem_connection = None
 
 
-def get_db_conn():
-    global _db_connection
-    if not _db_connection:
-        _db_connection = pymysql.connect(*settings.DB_INFO)
-        _db_connection.cursorclass = pymysql.cursors.DictCursor
-    return _db_connection
+def connect_db():
+    conn = pymysql.connect(*settings.DB_INFO)
+    conn.cursorclass = pymysql.cursors.DictCursor
+    return conn
+
+
+def get_db():
+    """Opens a new database connection if there is none yet for the
+    current application context.
+    """
+    if not hasattr(g, 'mysql_db'):
+        g.mysql_db = connect_db()
+    return g.mysql_db
 
 
 def get_steem_conn():

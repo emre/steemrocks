@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, abort
+from flask import Flask, render_template, request, redirect, abort, g
 
 from .tx_listener import listen
 from .models import Account
@@ -38,6 +38,8 @@ def profile(username):
         operations=operations, site_url=SITE_URL)
 
 
-
-
-
+@app.teardown_appcontext
+def close_db(error):
+    """Closes the database again at the end of the request."""
+    if hasattr(g, 'mysql_db'):
+        g.mysql_db.close()

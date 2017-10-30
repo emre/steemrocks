@@ -6,7 +6,7 @@ from dateutil.parser import parse
 from steem.amount import Amount
 
 from . import state
-from .utils import get_db_conn
+from .utils import get_db
 from .settings import INTERFACE_LINK, SITE_URL
 
 logger = logging.getLogger('steemrocks')
@@ -299,7 +299,7 @@ class Account:
         self.steem = steem
         self.account_data = None
         self.json_metadata = None
-        self.db_conn = db_conn or get_db_conn()
+        self.db_conn = db_conn or get_db()
 
     def set_account_deta(self):
         self.account_data = self.steem.get_account(self.username)

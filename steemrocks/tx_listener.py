@@ -3,7 +3,7 @@ import logging
 import time
 
 from . import models, state
-from .utils import get_db_conn, get_steem_conn
+from .utils import get_db, get_steem_conn
 
 logger = logging.getLogger('steemrocks')
 logger.setLevel(logging.DEBUG)
@@ -14,7 +14,7 @@ class TransactionListener(object):
 
     def __init__(self, steem):
         self.steem = steem
-        self.db = get_db_conn()
+        self.db = get_db()
 
     @property
     def properties(self):
@@ -52,8 +52,7 @@ class TransactionListener(object):
         if 'transactions' not in block_data:
             return
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            executor.submit(self.persist_block, block_data, block_num)
+        self.persist_block(block_data, block_num)
         state.dump_state(self.properties)
 
     def run(self, start_from=None):
