@@ -212,7 +212,11 @@ class CustomJson(object):
 
     def get_concrete_operation(self):
         if self.type == "follow":
-            return Follow(self.raw_data, account=self.account)
+            # ugly hack until I figure out what's happening
+            if 'following' in self.raw_data and 'follower' in self.raw_data:
+                return Follow(self.raw_data, account=self.account)
+            else:
+                logger.error(self.raw_data)
 
 
 class Transfer(object):
