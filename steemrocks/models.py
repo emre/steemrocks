@@ -43,11 +43,10 @@ class Block(object):
 
         self.db_conn.commit()
         end = time.time()
-        logger.info('Persisting to database took %s seconds.', end - start )
+        logger.info('Persisting to database took %s seconds.', end - start)
 
 
 class Transaction(object):
-
     def __init__(self, db_conn, block_num, transaction_data):
         self.db_conn = db_conn
         self.id = transaction_data.get("transaction_id")
@@ -94,6 +93,8 @@ class Operation(object):
             if self.raw_data.get("title") or \
                     self.raw_data.get("parent_author"):
                 return Comment(self.raw_data)
+            elif self.raw_data.get("author") and self.raw_data.get("permlink"):
+                return Comment(self.raw_data)
         elif self.type == "custom_json":
             raw_data = json.loads(self.raw_data["json"])
             if raw_data and len(raw_data) == 2:
@@ -128,7 +129,6 @@ class Operation(object):
 
 
 class Vote(object):
-
     def __init__(self, raw_data, account=None):
         self.voter = raw_data["voter"]
         self.author = raw_data["author"]
@@ -164,16 +164,14 @@ class Vote(object):
 
 
 class Comment(object):
-
     def __init__(self, raw_data):
-        self.author = raw_data["author"]
-        self.permlink = raw_data["permlink"]
-        self.parent_author = raw_data["parent_author"]
-        self.parent_permlink = raw_data["parent_permlink"]
-        self.title = raw_data["title"]
-        self.body = raw_data["body"]
-        self.json_metadata = raw_data["json_metadata"]
-
+        self.author = raw_data.get("author")
+        self.permlink = raw_data.get("permlink")
+        self.parent_author = raw_data.get("parent_author")
+        self.parent_permlink = raw_data.get("parent_permlink")
+        self.title = raw_data.get("title")
+        self.body = raw_data.get("body")
+        self.json_metadata = raw_data.get("json_metadata")
 
     @property
     def actor(self):
@@ -188,7 +186,8 @@ class Comment(object):
         if self.parent_permlink and self.parent_author:
             return "%s/@%s/%s" % (
                 INTERFACE_LINK, self.parent_author, self.parent_permlink)
-        return "#"
+        else:
+            return self.link
 
     @property
     def is_a_post(self):
@@ -206,7 +205,6 @@ class Comment(object):
 
 
 class CustomJson(object):
-
     def __init__(self, json_type, json_data, account=None):
         self.raw_data = json_data
         self.type = json_type
@@ -226,7 +224,6 @@ class CustomJson(object):
 
 
 class Transfer(object):
-
     def __init__(self, raw_data, account=None):
         self.to = raw_data.get("to")
         self._from = raw_data.get("from")
@@ -263,7 +260,6 @@ class Transfer(object):
 
 
 class Follow(object):
-
     def __init__(self, raw_data, account=None):
         self.follower = raw_data["follower"]
         self.following = raw_data["following"]
@@ -303,7 +299,6 @@ class Follow(object):
 
 
 class Account:
-
     def __init__(self, username, steem, db_conn=None):
         self.username = username
         self.steem = steem

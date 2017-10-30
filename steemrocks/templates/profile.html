@@ -12,7 +12,6 @@
         <div class="ibox-content profile-content">
             <h3><strong>{{account.account_data.name}}</strong>
 </h3>
-
             <p><i class="fa fa-map-marker"></i> {{ account.location}}</p>
             {% if account.about %}
                 <p>{{account.about}}</p>
@@ -80,7 +79,7 @@
                     {% if operation.sub_operation.is_a_post %}
                         <strong>{{ operation.actor }}</strong> authored a post. <a href="{{operation.sub_operation.link}}">{{operation.sub_operation.permlink}}.</a>
                     {% elif operation.sub_operation.is_a_comment %}
-                        <strong>{{ operation.actor }}</strong> replied to <a href="{{operation.sub_operation.parent_link}}">{{operation.sub_operation.parent_permlink}}.</a>
+                        <strong>{{ operation.actor }}</strong> replied to <a href="{{operation.sub_operation.parent_link}}">{%if operation.sub_operation.parent_permlink%}{{operation.sub_operation.parent_permlink}}{%else %}{{operation.sub_operation.permlink}}{%endif%}.</a>
                     {% endif %}
                 {% elif operation.type == 'custom_json' %}
                     {% if operation.sub_operation.type == 'follow' or operation.sub_operation.type == 'unfollow' %}
