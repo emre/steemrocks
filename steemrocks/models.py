@@ -86,7 +86,10 @@ class Operation(object):
 
     def get_concrete_operation(self):
         if self.type == "vote":
-            return Vote(self.raw_data, account=self.account)
+            if 'voter' in self.raw_data:
+                return Vote(self.raw_data, account=self.account)
+            else:
+                logger.error(self.raw_data)
         elif self.type == "comment":
             if self.raw_data.get("title") or \
                     self.raw_data.get("parent_author"):
