@@ -8,7 +8,7 @@ _steem_connection = None
 
 
 def connect_db():
-    conn = pymysql.connect(*settings.DB_INFO)
+    conn = pymysql.connect(*settings.DB_INFO, charset='utf8')
     conn.cursorclass = pymysql.cursors.DictCursor
     return conn
 
