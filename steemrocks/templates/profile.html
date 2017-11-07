@@ -92,9 +92,11 @@
                     {% autoescape false %}
                     {{ operation.sub_operation.action}}
                     {%if operation.sub_operation.memo %}
-                    <div class="well">
-                        {{ operation.sub_operation.memo}}
-                    </div>
+                        {%if operation.sub_operation.memo %}
+                        <div class="well">
+                            {{ operation.sub_operation.public_memo}}
+                        </div>
+                        {%endif%}
                     {%endif%}
                     {% endautoescape %}
 

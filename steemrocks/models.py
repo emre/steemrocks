@@ -243,6 +243,12 @@ class Transfer(object):
         self.account = account
 
     @property
+    def public_memo(self):
+        if self.memo.startswith("#"):
+            return "Private memo. Contents are hidden."
+        return self.memo
+
+    @property
     def action(self):
         from_template = "<strong>%s</strong>" % self.actor
         if self.account != self._from:
