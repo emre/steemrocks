@@ -151,6 +151,12 @@ class Vote(object):
         return "%s/@%s" % (INTERFACE_LINK, self.voter)
 
     @property
+    def exact_action(self):
+        if self.weight == 0:
+            return "unvoted"
+        return "upvoted"
+
+    @property
     def action(self):
         if self.account != self.voter:
             voter_template = '<a href="%s">%s</a>' % (
@@ -158,8 +164,9 @@ class Vote(object):
         else:
             voter_template = '<strong>%s</strong>' % self.voter
 
-        return '%s upvoted <a href="%s">%s</a>.<small><i>(%s%%)</i></small>' \
-               % (voter_template, self.link, self.permlink, self.weight / 100)
+        return '%s %s <a href="%s">%s</a>. <small><i>(%s%%)</i></small>' % (
+            voter_template, self.exact_action, self.link,
+            self.permlink, self.weight / 100)
 
 
 class Comment(object):
