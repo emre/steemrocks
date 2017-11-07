@@ -82,7 +82,7 @@
                         <strong>{{ operation.actor }}</strong> replied to <a href="{{operation.sub_operation.parent_link}}">{%if operation.sub_operation.parent_permlink%}{{operation.sub_operation.parent_permlink}}{%else %}{{operation.sub_operation.permlink}}{%endif%}.</a>
                     {% endif %}
                 {% elif operation.type == 'custom_json' %}
-                    {% if operation.sub_operation.type == 'follow' or operation.sub_operation.type == 'unfollow' %}
+                    {% if operation.sub_operation.type == 'follow' or operation.sub_operation.type == 'unfollow' or operation.sub_operation.type == 'mute' %}
                        {% autoescape false %}
                         {{operation.sub_operation.action}}
                         {% endautoescape %}

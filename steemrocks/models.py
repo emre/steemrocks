@@ -287,6 +287,9 @@ class Follow(object):
         if len(raw_data["what"]) == 0:
             self.type = "unfollow"
 
+        elif raw_data["what"] == ["ignore"]:
+            self.type = "mute"
+
     @property
     def actor(self):
         return self.follower
@@ -309,8 +312,14 @@ class Follow(object):
             effected_template = '<a href="%s" target="_blank">%s</a>' % (
                 effected_url, self.effected)
 
-        return "%s %sfollowed %s." % (
-            actor_template, "un" if self.type == "unfollow" else "",
+        exact_action = "followed"
+        if self.type == "unfollow":
+            exact_action = "unfollowed"
+        elif self.type == "mute":
+            exact_action = "muted"
+
+        return "%s %s %s." % (
+            actor_template, exact_action,
             effected_template
         )
 
@@ -468,9 +477,9 @@ class Delegate:
                 effected_url, self.effected)
 
         vesting_shares = int(Amount(self.vesting_shares))
-        exact_action = "delegate"
+        exact_action = "delegated"
         if vesting_shares == 0:
-            return "%s undelegate to %s." % (
+            return "%s undelegated to %s." % (
                 actor_template, effected_template
             )
         return "%s %s %s VESTS to %s" % (
