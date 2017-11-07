@@ -111,6 +111,11 @@ class Operation(object):
                 self.raw_data,
                 account=self.account,
             )
+        elif self.type == "claim_reward_balance":
+            return ClaimRewardBalance(
+                self.raw_data,
+                account=self.account,
+            )
 
     def persist(self):
         concrete_operation = self.get_concrete_operation()
@@ -484,3 +489,27 @@ class Delegate:
             )
         return "%s %s %s VESTS to %s" % (
             actor_template, exact_action, vesting_shares, effected_template)
+
+
+class ClaimRewardBalance:
+
+    def __init__(self, raw_data, account=None):
+        self.raw_data = raw_data
+        self.account = account
+
+    @property
+    def actor(self):
+        return self.raw_data["account"]
+
+    @property
+    def effected(self):
+        return ""
+
+    @property
+    def action(self):
+        return "%s claimed rewards: %s sbd, %s steem, %.2f vests." % (
+            self.actor,
+            Amount(self.raw_data["reward_sbd"]),
+            Amount(self.raw_data["reward_steem"]),
+            Amount(self.raw_data["reward_vests"])
+        )
