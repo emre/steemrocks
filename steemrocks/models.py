@@ -31,14 +31,13 @@ class Block(object):
     def persist(self):
         start = time.time()
         cursor = self.db_conn.cursor()
-        query = "INSERT INTO blocks " \
+        query = "INSERT IGNORE INTO blocks " \
                 "(`id`, `timestamp`, `raw_data`, `witness`, `num`) VALUES " \
-                "(%s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE raw_data=%s"
+                "(%s, %s, %s, %s, %s)"
 
         cursor.execute(
             query, [
-                self.id, self.created_at, '',
-                self.witness, self.num, ''])
+                self.id, self.created_at, '{}', self.witness, self.num])
 
         self.db_conn.commit()
         end = time.time()
@@ -132,6 +131,7 @@ class Vote(object):
         self.voter = raw_data["voter"]
         self.author = raw_data["author"]
         self.permlink = raw_data["permlink"]
+        self.weight = raw_data["weight"]
         self.account = account
 
     @property
@@ -158,8 +158,8 @@ class Vote(object):
         else:
             voter_template = '<strong>%s</strong>' % self.voter
 
-        return '%s upvoted <a href="%s">%s</a>' % (
-            voter_template, self.link, self.permlink)
+        return '%s upvoted <a href="%s">%s</a>.<small><i>(%s%%)</i></small>' \
+               % (voter_template, self.link, self.permlink, self.weight / 100)
 
 
 class Comment(object):
