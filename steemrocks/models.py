@@ -106,6 +106,11 @@ class Operation(object):
                 self.raw_data,
                 account=self.account,
             )
+        elif self.type == "delegate_vesting_shares":
+            return Delegate(
+                self.raw_data,
+                account=self.account,
+            )
 
     def persist(self):
         concrete_operation = self.get_concrete_operation()
@@ -426,3 +431,41 @@ class Account:
             ))
 
         return operations
+
+
+class Delegate:
+
+    def __init__(self, raw_data, account=None):
+        self.raw_data = raw_data
+        self.account = account
+        self.vesting_shares = raw_data["vesting_shares"]
+
+    @property
+    def actor(self):
+        return self.raw_data["delegator"]
+
+    @property
+    def effected(self):
+        return self.raw_data["delegatee"]
+
+    @property
+    def action(self):
+        actor_url = SITE_URL + '/' + self.actor
+        effected_url = SITE_URL + '/' + self.effected
+        actor_template = self.actor
+        effected_template = self.effected
+        if self.account == self.effected:
+            actor_template = '<a href="%s" target="_blank">%s</a>' % (
+                actor_url, self.actor)
+        elif self.account == self.actor:
+            effected_template = '<a href="%s" target="_blank">%s</a>' % (
+                effected_url, self.effected)
+
+        vesting_shares = int(Amount(self.vesting_shares))
+        exact_action = "delegate"
+        if vesting_shares == 0:
+            return "%s undelegate to %s." % (
+                actor_template, effected_template
+            )
+        return "%s %s %s VESTS to %s" % (
+            actor_template, exact_action, vesting_shares, effected_template)

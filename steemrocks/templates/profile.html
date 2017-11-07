@@ -98,6 +98,11 @@
                     {%endif%}
                     {% endautoescape %}
 
+                 {%elif operation.type == "delegate_vesting_shares" %}
+                    {% autoescape false %}
+                    {{operation.sub_operation.action}}
+                    {% endautoescape %}
+
                 {% endif %}
 
                 {% if operation.created_at %}
