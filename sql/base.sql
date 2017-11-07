@@ -86,3 +86,13 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 ALTER TABLE `steemrocks`.`operations`
 ADD COLUMN `created_at` DATETIME NULL AFTER `raw_data`;
+
+
+ALTER TABLE `steemrocks`.`operations`
+DROP FOREIGN KEY `tx_id_reference`;
+
+
+
+ALTER TABLE `steemrocks`.`operations`
+ADD COLUMN `id` INT NOT NULL AUTO_INCREMENT AFTER `created_at`,
+ADD PRIMARY KEY (`id`);
