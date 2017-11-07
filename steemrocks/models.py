@@ -232,11 +232,12 @@ class CustomJson(object):
 
     def get_concrete_operation(self):
         if self.type == "follow":
-            # ugly hack until I figure out what's happening
             if 'following' in self.raw_data and 'follower' in self.raw_data:
                 return Follow(self.raw_data, account=self.account)
             else:
                 logger.error(self.raw_data)
+        elif self.type == "reblog":
+            return Resteem(self.raw_data, account=self.account)
 
 
 class Transfer(object):
@@ -513,3 +514,39 @@ class ClaimRewardBalance:
             Amount(self.raw_data["reward_steem"]),
             Amount(self.raw_data["reward_vests"])
         )
+
+
+class Resteem:
+
+    def __init__(self, raw_data, account=None):
+        self.raw_data = raw_data
+        self.account = account
+
+    @property
+    def type(self):
+        return "resteem"
+
+    @property
+    def actor(self):
+        return self.raw_data["account"]
+
+    @property
+    def effected(self):
+        return self.raw_data["author"]
+
+    @property
+    def action(self):
+        actor_url = SITE_URL + '/' + self.actor
+        actor_template = self.actor
+
+        if self.account != self.actor:
+            actor_template = '<a href="%s" target="_blank">%s</a>' % (
+                actor_url, actor_template)
+
+        return '%s resteemed <a href="%s">%s</a>.' % (
+            actor_template, self.link, self.raw_data["permlink"])
+
+    @property
+    def link(self):
+        return "%s/@%s/%s" % (
+            INTERFACE_LINK, self.raw_data["author"], self.raw_data["permlink"])
