@@ -30,7 +30,6 @@ class Block(object):
 
     def persist(self):
         start = time.time()
-        dumped_raw_data = json.dumps(self.raw_data)
         cursor = self.db_conn.cursor()
         query = "INSERT INTO blocks " \
                 "(`id`, `timestamp`, `raw_data`, `witness`, `num`) VALUES " \
@@ -38,8 +37,8 @@ class Block(object):
 
         cursor.execute(
             query, [
-                self.id, self.created_at, dumped_raw_data,
-                self.witness, self.num, dumped_raw_data])
+                self.id, self.created_at, '',
+                self.witness, self.num, ''])
 
         self.db_conn.commit()
         end = time.time()
