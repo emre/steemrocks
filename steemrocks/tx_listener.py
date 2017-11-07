@@ -1,4 +1,4 @@
-import concurrent.futures
+ import concurrent.futures
 import logging
 import time
 
@@ -6,7 +6,7 @@ from . import models, state
 from .utils import get_db, get_steem_conn
 
 logger = logging.getLogger('steemrocks')
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 logging.basicConfig()
 
 
@@ -78,19 +78,23 @@ class TransactionListener(object):
     def persist_block(self, block_data, block_num):
         block = models.Block(self.db, block_num, block_data)
         block.persist()
+        saved_txs = set()
+        operation_data = self.steem.get_ops_in_block(
+            block_num, virtual_only=False)
 
-        for transaction_id in block_data.get("transaction_ids"):
-            tx_data = self.steem.get_transaction(transaction_id)
-            transaction = models.Transaction(self.db, block_num, tx_data)
-            transaction.persist()
+        for operation in operation_data:
+            if operation["trx_id"] not in saved_txs:
+                transaction = models.Transaction(
+                    self.db, block_num, operation["trx_id"])
+                transaction.persist()
+                saved_txs.add(operation["trx_id"])
 
-            for operation_data in transaction.raw_data.get("operations", []):
-                op_type, op_value = operation_data[0:2]
-                operation = models.Operation(
-                    self.db, transaction.id,
-                    op_type, op_value,
-                    block.created_at)
-                operation.persist()
+            op_type, op_value = operation['op'][0:2]
+            operation = models.Operation(
+                self.db, transaction.id,
+                op_type, op_value,
+                block.created_at)
+            operation.persist()
 
 
 def listen():

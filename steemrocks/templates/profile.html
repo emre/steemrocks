@@ -105,6 +105,8 @@
                     {{operation.sub_operation.action}}
                     {% endautoescape %}
 
+                {%elif operation.type =="claim_reward_balance" %}
+                    {{ operation.sub_operation.action }}
                 {% endif %}
 
                 {% if operation.created_at %}

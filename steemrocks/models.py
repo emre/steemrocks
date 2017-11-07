@@ -45,20 +45,20 @@ class Block(object):
 
 
 class Transaction(object):
-    def __init__(self, db_conn, block_num, transaction_data):
+    def __init__(self, db_conn, block_num, tx_id):
         self.db_conn = db_conn
-        self.id = transaction_data.get("transaction_id")
+        self.id = tx_id
         self.block_num = block_num
-        self.raw_data = transaction_data
+        self.raw_data = '{}'
 
     def persist(self):
         cursor = self.db_conn.cursor()
         dumped_raw_data = json.dumps(self.raw_data)
-        query = "INSERT INTO transactions " \
+        query = "INSERT IGNORE INTO transactions " \
                 "(`id`, `block_num`, `raw_data`) VALUES " \
-                "(%s, %s, %s) ON DUPLICATE KEY UPDATE raw_data=%s"
+                "(%s, %s, %s)"
         cursor.execute(query, [
-            self.id, self.block_num, dumped_raw_data, dumped_raw_data])
+            self.id, self.block_num, dumped_raw_data])
         self.db_conn.commit()
 
 
