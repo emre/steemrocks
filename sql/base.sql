@@ -63,12 +63,13 @@ ENGINE = InnoDB;
 -- Table `steemrocks`.`operations`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `steemrocks`.`operations` (
+  `id` INT NOT NULL AUTO_INCREMENT,
   `tx_id` VARCHAR(40) NOT NULL,
   `type` VARCHAR(64) NULL,
   `actor` VARCHAR(45) NULL,
   `effected` VARCHAR(45) NULL,
   `raw_data` JSON NULL,
-  PRIMARY KEY (`tx_id`),
+  PRIMARY KEY (`id`),
   INDEX `actore_reference_idx` (`actor` ASC),
   INDEX `effected_reference_idx` (`effected` ASC),
   CONSTRAINT `tx_id_reference`
@@ -93,6 +94,3 @@ DROP FOREIGN KEY `tx_id_reference`;
 
 
 
-ALTER TABLE `steemrocks`.`operations`
-ADD COLUMN `id` INT NOT NULL AUTO_INCREMENT AFTER `created_at`,
-ADD PRIMARY KEY (`id`);
