@@ -20,11 +20,11 @@ def listen_transactions():
     listen()
 
 
-# @app.route('/')
-# def index():
-#     if request.args.get('username'):
-#         return redirect('/' + request.args.get('username'))
-#     return render_template('index.html')
+@app.route('/')
+def index():
+    if request.args.get('username'):
+        return redirect('/' + request.args.get('username'))
+    return render_template('index.html')
 
 
 @app.route('/<username>', defaults={'page': 1})
