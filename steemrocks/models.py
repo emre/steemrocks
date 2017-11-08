@@ -139,6 +139,11 @@ class Operation(object):
                 self.raw_data,
                 account=self.account,
             )
+        elif self.type == "return_vesting_delegation":
+            return ReturnVestingDelegation(
+                self.raw_data,
+                account=self.account
+            )
         elif self.type == "feed_publish":
             return FeedPublish(
                 self.raw_data,
@@ -791,4 +796,26 @@ class CurationReward:
             self.actor,
             self.raw_data["reward"].lower(),
             link
+        )
+
+
+class ReturnVestingDelegation:
+
+    def __init__(self, raw_data, account=None):
+        self.raw_data = raw_data
+        self.account = account
+
+    @property
+    def actor(self):
+        return self.raw_data["account"]
+
+    @property
+    def effected(self):
+        return ""
+
+    @property
+    def action(self):
+        return "%s got vesting delegations back. %.2f vests." % (
+            self.actor,
+            Amount(self.raw_data["vesting_shares"]).amount
         )
