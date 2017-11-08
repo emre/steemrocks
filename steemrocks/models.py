@@ -134,6 +134,11 @@ class Operation(object):
                 self.raw_data,
                 account=self.account,
             )
+        elif self.type == "curation_reward":
+            return CurationReward(
+                self.raw_data,
+                account=self.account,
+            )
         elif self.type == "feed_publish":
             return FeedPublish(
                 self.raw_data,
@@ -626,16 +631,28 @@ class AuthorReward:
             INTERFACE_LINK, self.raw_data["author"], self.raw_data["permlink"])
 
     @property
+    def exact_action(self):
+        return "author rewards"
+
+    @property
     def action(self):
-        return '%s got author rewards for <a href="%s">%s</a>. ' \
+        return '%s got %s for <a href="%s">%s</a>. ' \
                '<br>%s sbd, %s steem, %.2f vests.' % (
                 self.actor,
+                self.exact_action,
                 self.link,
                 self.raw_data["permlink"][0:8],
                 Amount(self.raw_data["sbd_payout"]).amount,
                 Amount(self.raw_data["steem_payout"]).amount,
                 Amount(self.raw_data["vesting_payout"]).amount,
         )
+
+
+class CommentReward(AuthorReward):
+
+    @property
+    def exact_action(self):
+        return "comment rewards"
 
 
 class FeedPublish:
@@ -742,3 +759,36 @@ class AccountCreateWithDelegation:
                 effected_url, self.effected)
 
         return "%s created account %s." % (actor_template, effected_template)
+
+
+class CurationReward:
+
+    def __init__(self, raw_data, account=None):
+        self.raw_data = raw_data
+        self.account = account
+
+    @property
+    def actor(self):
+        return self.raw_data["curator"]
+
+    @property
+    def effected(self):
+        return ""
+
+    @property
+    def link(self):
+        return "%s/@%s/%s" % (
+            INTERFACE_LINK,
+            self.raw_data["comment_author"],
+            self.raw_data["comment_permlink"])
+
+    @property
+    def action(self):
+        link = '<a href="%s">%s</a>' % (
+            self.raw_data["comment_permlink"],
+            self.raw_data["comment_permlink"])
+        return "%s got curation reward: %s for %s" % (
+            self.actor,
+            self.raw_data["reward"].lower(),
+            link
+        )

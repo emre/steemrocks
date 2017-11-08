@@ -125,7 +125,7 @@
                         {{ operation.sub_operation.action}}
                     {% endautoescape %}
 
-                 {% elif operation.type == "author_reward" %}
+                 {% elif operation.type == "author_reward" or operation.type == "comment_reward"  or operation.type == "curation_reward" %}
                     {% autoescape false %}
                         {{ operation.sub_operation.action}}
                     {% endautoescape %}
