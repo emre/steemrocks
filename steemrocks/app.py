@@ -9,7 +9,7 @@ import bleach
 
 app = Flask(__name__)
 
-PER_PAGE = 40
+PER_PAGE = 25
 
 
 @app.cli.command()

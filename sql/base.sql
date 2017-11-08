@@ -94,3 +94,4 @@ DROP FOREIGN KEY `tx_id_reference`;
 
 
 
+ALTER TABLE `operations` ADD UNIQUE `unique_index`(`tx_id`, `type`, `actor`, `effected`);
