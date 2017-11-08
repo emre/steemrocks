@@ -487,7 +487,6 @@ class Account:
                 'actor=%s or effected=%s ORDER BY created_at ' \
                 'DESC LIMIT %s, %s'
 
-        print("%s, %s" % (start, end))
         cursor = self.db_conn.cursor()
         cursor.execute(query, (self.username, self.username, start, end))
         operations = []

@@ -79,7 +79,7 @@
                 </small>
                 {% if operation.type == 'vote' %}
                     {% autoescape false %}
-                        {{ operation.sub_operation.action}}
+                        {{ clean(operation.sub_operation.action)}}
                     {% endautoescape %}
 
                 {% elif operation.type == 'comment' %}
@@ -91,17 +91,17 @@
                 {% elif operation.type == 'custom_json' %}
                     {% if operation.sub_operation.type == 'follow' or operation.sub_operation.type == 'unfollow' or operation.sub_operation.type == 'mute' or operation.sub_operation.type == 'resteem' %}
                        {% autoescape false %}
-                            {{operation.sub_operation.action}}
+                            {{ clean(operation.sub_operation.action)}}
                         {% endautoescape %}
                     {% endif %}
 
                 {% elif operation.type == 'transfer' %}
                     {% autoescape false %}
-                    {{ operation.sub_operation.action}}
+                    {{ clean(operation.sub_operation.action)}}
                     {%if operation.sub_operation.memo %}
                         {%if operation.sub_operation.memo %}
                         <div class="well">
-                            {{ operation.sub_operation.public_memo}}
+                            {{ clean(operation.sub_operation.public_memo)}}
                         </div>
                         {%endif%}
                     {%endif%}
@@ -109,7 +109,7 @@
 
                  {%elif operation.type == "delegate_vesting_shares" %}
                     {% autoescape false %}
-                    {{operation.sub_operation.action}}
+                    {{ clean(operation.sub_operation.action)}}
                     {% endautoescape %}
 
                 {% elif operation.type =="claim_reward_balance" %}
@@ -122,12 +122,12 @@
                     {{ operation.sub_operation.action}}
                 {% elif operation.type == "account_witness_vote" %}
                     {% autoescape false %}
-                        {{ operation.sub_operation.action}}
+                        {{ clean(operation.sub_operation.action)}}
                     {% endautoescape %}
 
                  {% elif operation.type == "author_reward" or operation.type == "comment_reward"  or operation.type == "curation_reward" %}
                     {% autoescape false %}
-                        {{ operation.sub_operation.action}}
+                        {{ clean(operation.sub_operation.action)}}
                     {% endautoescape %}
                  {% elif operation.type == "delete_comment" %}
                     {{ operation.sub_operation.action}}
@@ -135,7 +135,7 @@
                     {{ operation.sub_operation.action}}
                  {% elif operation.type == "account_create_with_delegation" %}
                     {% autoescape false %}
-                    {{ operation.sub_operation.action}}
+                    {{ clean(operation.sub_operation.action)}}
                     {% endautoescape %}
                 {% endif %}
 

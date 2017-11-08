@@ -2,3 +2,4 @@ PyMySQL==0.7.11
 steem==0.18.103
 Flask==0.12.2
 python_dateutil==2.6.1
+bleach==2.1.1

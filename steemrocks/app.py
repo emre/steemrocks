@@ -5,6 +5,8 @@ from .models import Account
 from .utils import get_steem_conn, Pagination
 from .settings import SITE_URL
 
+import bleach
+
 app = Flask(__name__)
 
 PER_PAGE = 40
@@ -22,16 +24,16 @@ def listen_transactions():
 
 @app.route('/')
 def index():
-    if request.args.get('username'):
-        return redirect('/' + request.args.get('username'))
+    if request.query_string and request.args.get('account'):
+        return redirect('/' + request.args.get('account'))
     return render_template('index.html')
 
 
 @app.route('/<username>', defaults={'page': 1})
-@app.route('/@<username>', defaults={'page': 1})
 @app.route('/<username>/page/<int:page>')
-@app.route('/@<username>/page/<int:page>')
 def profile(username, page):
+    if username.startswith("@"):
+        username = username.replace("@", "")
     account = Account(username, get_steem_conn()).set_account_deta()
     if not account.account_data:
         abort(404)
@@ -60,4 +62,10 @@ def url_for_other_page(page):
     args = request.view_args.copy()
     args['page'] = page
     return url_for(request.endpoint, **args)
+
+
+def strip_tags(text):
+    return bleach.clean(text, tags=["strong", "a", "i", "small"])
+
 app.jinja_env.globals['url_for_other_page'] = url_for_other_page
+app.jinja_env.globals['clean'] = strip_tags
