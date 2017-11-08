@@ -129,7 +129,8 @@
                     {% autoescape false %}
                         {{ operation.sub_operation.action}}
                     {% endautoescape %}
-
+                 {% elif operation.type == "delete_comment" %}
+                    {{ operation.sub_operation.action}}
                 {% endif %}
 
                 {% if operation.created_at %}
