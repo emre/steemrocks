@@ -2,6 +2,7 @@ import json
 import logging
 import math
 import time
+import uuid
 from dateutil.parser import parse
 from steem.amount import Amount
 
@@ -51,12 +52,18 @@ class Transaction(object):
         self.block_num = block_num
         self.raw_data = '{}'
 
+        if self.id == "0000000000000000000000000000000000000000":
+            self.id = "vop-%s" % str(uuid.uuid4())
+
+
     def persist(self):
         cursor = self.db_conn.cursor()
         dumped_raw_data = json.dumps(self.raw_data)
+
         query = "INSERT IGNORE INTO transactions " \
                 "(`id`, `block_num`, `raw_data`) VALUES " \
                 "(%s, %s, %s)"
+
         cursor.execute(query, [
             self.id, self.block_num, dumped_raw_data])
         self.db_conn.commit()
@@ -80,6 +87,12 @@ class Operation(object):
     @property
     def sub_operation(self):
         return self.get_concrete_operation()
+
+    @property
+    def trx_id(self):
+        if self.tx_id.startswith("vop"):
+            return "virtual operation"
+        return self.tx_id
 
     def get_concrete_operation(self):
         if self.type == "vote":

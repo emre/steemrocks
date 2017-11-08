@@ -71,7 +71,7 @@
                 <div class="media-body ">
 
                 <small class="pull-right">
-                    {% if operation.tx_id != "0000000000000000000000000000000000000000" %}
+                    {% if operation.trx_id != "virtual operation" %}
                     <a href="http://steemd.com/tx/{{operation.tx_id}}" target="_blank"><span class="badge">{{operation.tx_id[0:8]}}...</span></a>
                     {%else%}
                     <span class="badge">virtual operation</span>
