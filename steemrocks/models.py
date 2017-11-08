@@ -121,6 +121,11 @@ class Operation(object):
                 self.raw_data,
                 account=self.account,
             )
+        elif self.type == "author_reward":
+            return AuthorReward(
+                self.raw_data,
+                account=self.account,
+            )
 
     def persist(self):
         concrete_operation = self.get_concrete_operation()
@@ -576,3 +581,35 @@ class ProducerReward:
     def action(self):
         return "%s got producer rewards: %.2f vests." % (
             self.actor, self.vesting_shares)
+
+
+class AuthorReward:
+
+    def __init__(self, raw_data, account=None):
+        self.raw_data = raw_data
+        self.account = account
+
+    @property
+    def actor(self):
+        return self.raw_data["author"]
+
+    @property
+    def effected(self):
+        return ""
+
+    @property
+    def link(self):
+        return "%s/@%s/%s" % (
+            INTERFACE_LINK, self.raw_data["author"], self.raw_data["permlink"])
+
+    @property
+    def action(self):
+        return '%s got author rewards for <a href="%s">%s</a>. ' \
+               '<br>%s sbd, %s steem, %.2f vests.' % (
+                self.actor,
+                self.link,
+                self.raw_data["permlink"][0:8],
+                Amount(self.raw_data["sbd_payout"]).amount,
+                Amount(self.raw_data["steem_payout"]).amount,
+                Amount(self.raw_data["vesting_payout"]).amount,
+        )
