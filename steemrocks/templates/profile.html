@@ -118,6 +118,13 @@
                  {%elif operation.type == "producer_reward" %}
                     {{ operation.sub_operation.action}}
 
+                 {%elif operation.type == "feed_publish" %}
+                    {{ operation.sub_operation.action}}
+                {% elif operation.type == "account_witness_vote" %}
+                    {% autoescape false %}
+                        {{ operation.sub_operation.action}}
+                    {% endautoescape %}
+
                  {% elif operation.type == "author_reward" %}
                     {% autoescape false %}
                         {{ operation.sub_operation.action}}
@@ -134,11 +141,11 @@
 
                {% endfor %}
 
-            </div><!--feed-activity-list-->
+            </div>
 
 
-        </div><!-- feed-activity-list -->
-    </div><!--ibox-content -->
+        </div>
+    </div>
     </div>
     </div>
     </div>

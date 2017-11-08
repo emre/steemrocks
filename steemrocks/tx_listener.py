@@ -93,7 +93,9 @@ class TransactionListener(object):
                 self.db, transaction.id,
                 op_type, op_value,
                 block.created_at)
-            _operation.persist()
+
+            if _operation.sub_operation:
+                _operation.persist()
 
 
 def listen():

@@ -117,12 +117,25 @@ class Operation(object):
                 account=self.account,
             )
         elif self.type == "producer_reward":
-            return ProducerReward(
+            # this looks spammy on top producers.
+            # ignoring it until we find a better solution.
+            # return ProducerReward(
+            #     self.raw_data,
+            #     account=self.account,
+            # )
+            pass
+        elif self.type == "account_witness_vote":
+            return AccountWitnessVote(
                 self.raw_data,
                 account=self.account,
             )
         elif self.type == "author_reward":
             return AuthorReward(
+                self.raw_data,
+                account=self.account,
+            )
+        elif self.type == "feed_publish":
+            return FeedPublish(
                 self.raw_data,
                 account=self.account,
             )
@@ -612,4 +625,59 @@ class AuthorReward:
                 Amount(self.raw_data["sbd_payout"]).amount,
                 Amount(self.raw_data["steem_payout"]).amount,
                 Amount(self.raw_data["vesting_payout"]).amount,
+        )
+
+
+class FeedPublish:
+
+    def __init__(self, raw_data, account=None):
+        self.raw_data = raw_data
+        self.account = account
+
+    @property
+    def actor(self):
+        return self.raw_data["publisher"]
+
+    @property
+    def effected(self):
+        return ""
+
+    @property
+    def action(self):
+        return "%s published price feed. $%s." % (
+            self.actor, Amount(self.raw_data["exchange_rate"]["base"]).amount)
+
+
+class AccountWitnessVote:
+
+    def __init__(self, raw_data, account=None):
+        self.raw_data = raw_data
+        self.account = account
+
+    @property
+    def actor(self):
+        return self.raw_data["account"]
+
+    @property
+    def effected(self):
+        return self.raw_data["witness"]
+
+    @property
+    def action(self):
+        actor_url = SITE_URL + '/' + self.actor
+        effected_url = SITE_URL + '/' + self.effected
+        actor_template = self.actor
+        effected_template = self.effected
+
+        if self.account == self.effected:
+            actor_template = '<a href="%s" target="_blank">%s</a>' % (
+                actor_url, self.actor)
+        elif self.account == self.actor:
+            effected_template = '<a href="%s" target="_blank">%s</a>' % (
+                effected_url, self.effected)
+
+        exact_action = "approved" if self.raw_data["approve"] else "unapproved"
+
+        return "%s %s witness: %s." % (
+            actor_template, exact_action, effected_template
         )
