@@ -65,7 +65,7 @@ def url_for_other_page(page):
 
 
 def strip_tags(text):
-    return bleach.clean(text, tags=["strong", "a", "i", "small"])
+    return bleach.clean(text, tags=["strong", "a", "i", "small", "br"])
 
 app.jinja_env.globals['url_for_other_page'] = url_for_other_page
 app.jinja_env.globals['clean'] = strip_tags
