@@ -144,6 +144,11 @@ class Operation(object):
                 self.raw_data,
                 account=self.account,
             )
+        elif self.type == "account_create_with_delegation":
+            return AccountCreateWithDelegation(
+                self.raw_data,
+                account=self.account,
+            )
 
     def persist(self):
         concrete_operation = self.get_concrete_operation()
@@ -706,3 +711,34 @@ class DeleteComment:
     def action(self):
         return "%s deleted comment. (@%s)" % (
             self.actor, self.raw_data["permlink"])
+
+
+class AccountCreateWithDelegation:
+
+    def __init__(self, raw_data, account=None):
+        self.raw_data = raw_data
+        self.account = account
+
+    @property
+    def actor(self):
+        return self.raw_data["creator"]
+
+    @property
+    def effected(self):
+        return self.raw_data["new_account_name"]
+
+    @property
+    def action(self):
+        actor_url = SITE_URL + '/' + self.actor
+        effected_url = SITE_URL + '/' + self.effected
+        actor_template = self.actor
+        effected_template = self.effected
+
+        if self.account == self.effected:
+            actor_template = '<a href="%s" target="_blank">%s</a>' % (
+                actor_url, self.actor)
+        elif self.account == self.actor:
+            effected_template = '<a href="%s" target="_blank">%s</a>' % (
+                effected_url, self.effected)
+
+        return "%s created account %s." % (actor_template, effected_template)
