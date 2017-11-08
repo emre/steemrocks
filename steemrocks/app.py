@@ -38,10 +38,8 @@ def profile(username, page):
     if not account.account_data:
         abort(404)
 
+    page = page - 1
     start = page * PER_PAGE
-    if page == 1:
-        start = 0
-
     pagination = Pagination(page, PER_PAGE, account.get_operation_count())
 
     operations = account.get_operations(start=start, end=PER_PAGE)

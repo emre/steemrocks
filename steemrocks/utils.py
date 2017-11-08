@@ -34,7 +34,7 @@ def get_steem_conn():
 class Pagination(object):
 
     def __init__(self, page, per_page, total_count):
-        self.page = page
+        self.page = page + 1
         self.per_page = per_page
         self.total_count = total_count
 
@@ -48,7 +48,7 @@ class Pagination(object):
 
     @property
     def has_next(self):
-        return self.page + 1 < self.pages
+        return self.page  < self.pages
 
     def iter_pages(self, left_edge=2, left_current=2,
                    right_current=5, right_edge=2):
