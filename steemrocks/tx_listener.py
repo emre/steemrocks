@@ -1,4 +1,3 @@
- import concurrent.futures
 import logging
 import time
 
@@ -90,11 +89,11 @@ class TransactionListener(object):
                 saved_txs.add(operation["trx_id"])
 
             op_type, op_value = operation['op'][0:2]
-            operation = models.Operation(
+            _operation = models.Operation(
                 self.db, transaction.id,
                 op_type, op_value,
                 block.created_at)
-            operation.persist()
+            _operation.persist()
 
 
 def listen():

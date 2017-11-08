@@ -116,6 +116,11 @@ class Operation(object):
                 self.raw_data,
                 account=self.account,
             )
+        elif self.type == "producer_reward":
+            return ProducerReward(
+                self.raw_data,
+                account=self.account,
+            )
 
     def persist(self):
         concrete_operation = self.get_concrete_operation()
@@ -172,7 +177,7 @@ class Vote(object):
             voter_template = '<a href="%s">%s</a>' % (
                 self.voter_link, self.voter)
         else:
-            voter_template = '<strong>%s</strong>' % self.voter
+            voter_template = self.voter
 
         return '%s %s <a href="%s">%s</a>. <small><i>(%s%%)</i></small>' % (
             voter_template, self.exact_action, self.link,
@@ -256,7 +261,7 @@ class Transfer(object):
 
     @property
     def action(self):
-        from_template = "<strong>%s</strong>" % self.actor
+        from_template = self.actor
         if self.account != self._from:
             from_template = '<a href="%s">%s</a>' % (
                 '%s/@%s' % (SITE_URL, self._from), self._from
@@ -550,3 +555,24 @@ class Resteem:
     def link(self):
         return "%s/@%s/%s" % (
             INTERFACE_LINK, self.raw_data["author"], self.raw_data["permlink"])
+
+
+class ProducerReward:
+
+    def __init__(self, raw_data, account=None):
+        self.raw_data = raw_data
+        self.account = account
+        self.vesting_shares = Amount(raw_data["vesting_shares"])
+
+    @property
+    def actor(self):
+        return self.raw_data["producer"]
+
+    @property
+    def effected(self):
+        return ""
+
+    @property
+    def action(self):
+        return "%s got producer rewards: %.2f vests." % (
+            self.actor, self.vesting_shares)

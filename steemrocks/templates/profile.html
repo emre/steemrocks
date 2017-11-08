@@ -69,7 +69,14 @@
                         <span  class="pull-left">-</span>
 
                 <div class="media-body ">
-                <small class="pull-right">transaction <a href="http://steemd.com/tx/{{operation.tx_id}}" target="_blank">{{operation.tx_id[0:8]}}...</a></small>
+
+                <small class="pull-right">
+                    {% if operation.tx_id != "0000000000000000000000000000000000000000" %}
+                    <a href="http://steemd.com/tx/{{operation.tx_id}}" target="_blank"><span class="badge">{{operation.tx_id[0:8]}}...</span></a>
+                    {%else%}
+                    <span class="badge">virtual operation</span>
+                    {%endif%}
+                </small>
                 {% if operation.type == 'vote' %}
                     {% autoescape false %}
                         {{ operation.sub_operation.action}}
@@ -107,6 +114,9 @@
 
                 {% elif operation.type =="claim_reward_balance" %}
                     {{ operation.sub_operation.action }}
+
+                 {%elif operation.type == "producer_reward" %}
+                    {{ operation.sub_operation.action}}
                 {% endif %}
 
                 {% if operation.created_at %}
