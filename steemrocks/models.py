@@ -472,7 +472,7 @@ class Account:
 
     @property
     def total_sp(self):
-        return int(self.sp + self.received_sp - self.delegated_sp)
+        return round(self.sp + self.received_sp - self.delegated_sp, 2)
 
     @property
     def creation_date(self):
