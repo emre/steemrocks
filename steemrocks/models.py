@@ -450,7 +450,7 @@ class Account:
         rep = int(self.account_data['reputation'])
         if rep == 0:
             return 25
-        score = (math.log10(abs(rep)) - 9) * 9 + 25
+        score = max([math.log10(abs(rep)) - 9, 0]) * 9 + 25
         if rep < 0:
             score = 50 - score
         return round(score, precision)
