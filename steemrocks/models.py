@@ -107,7 +107,11 @@ class Operation(object):
             elif self.raw_data.get("author") and self.raw_data.get("permlink"):
                 return Comment(self.raw_data)
         elif self.type == "custom_json":
-            raw_data = json.loads(self.raw_data["json"])
+            try:
+                raw_data = json.loads(self.raw_data["json"])
+            except Exception as e:
+                logger.error(self.raw_data["json"])
+                return 
             if raw_data and len(raw_data) == 2:
                 return CustomJson(
                     raw_data[0], raw_data[1], account=self.account
