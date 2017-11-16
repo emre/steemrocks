@@ -3,12 +3,14 @@ import logging
 import math
 import time
 import uuid
+from datetime import datetime
+
 from dateutil.parser import parse
 from steem.amount import Amount
 
 from . import state
-from .utils import get_db
 from .settings import INTERFACE_LINK, SITE_URL
+from .utils import get_db
 
 logger = logging.getLogger('steemrocks')
 logger.setLevel(logging.DEBUG)
@@ -447,7 +449,12 @@ class Account:
 
     @property
     def voting_power(self):
-        return self.account_data['voting_power'] / 100
+        last_vote_time = parse(self.account_data["last_vote_time"])
+        diff_in_seconds = (datetime.utcnow() - last_vote_time).seconds
+        regenerated_vp = diff_in_seconds * 10000 / 86400 / 5
+        total_vp = (
+                   self.account_data["voting_power"] + regenerated_vp) / 100
+        return "%.2f" % total_vp
 
     @property
     def reputation(self, precision=2):
