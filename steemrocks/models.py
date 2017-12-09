@@ -115,9 +115,12 @@ class Operation(object):
                 logger.error(self.raw_data["json"])
                 return 
             if raw_data and len(raw_data) == 2:
-                return CustomJson(
-                    raw_data[0], raw_data[1], account=self.account
-                ).get_concrete_operation()
+                try:
+                    return CustomJson(
+                        raw_data[0], raw_data[1], account=self.account
+                    ).get_concrete_operation()
+                except KeyError:
+                    return None
             else:
                 logger.error(raw_data)
         elif self.type == "transfer":
