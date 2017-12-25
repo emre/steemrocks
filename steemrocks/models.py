@@ -7,12 +7,11 @@ from datetime import datetime
 
 from dateutil.parser import parse
 from steem.amount import Amount
-from steem import Steem
 from steem.blockchain import Blockchain
 
 from . import state
 from .settings import INTERFACE_LINK, SITE_URL
-from .utils import get_db
+from .utils import get_db, get_steem_conn
 
 logger = logging.getLogger('steemrocks')
 logger.setLevel(logging.DEBUG)
@@ -489,7 +488,7 @@ class Account:
 
     @property
     def worth_sp(self):
-        s = Steem()
+        s = get_steem_conn()
         b = Blockchain()
 
         p = 10000
