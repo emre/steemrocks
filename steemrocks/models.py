@@ -553,7 +553,7 @@ class Account:
 
     @property
     def user_link(self):
-        return "%s/@%s" % (INTERFACE_LINK, self.author)
+        return "%s/@%s" % (INTERFACE_LINK, self.username)
 
 class Delegate:
 
