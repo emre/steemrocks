@@ -33,6 +33,7 @@ def index():
 
 
 @app.route('/<username>/rewards')
+@app.route('/@<username>/rewards')
 def rewards(username):
     s = get_steem_conn()
     account = Account(username, get_steem_conn()).set_account_deta()
