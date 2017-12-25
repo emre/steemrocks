@@ -7,10 +7,11 @@ from datetime import datetime
 
 from dateutil.parser import parse
 from steem.amount import Amount
+from steem.blockchain import Blockchain
 
 from . import state
 from .settings import INTERFACE_LINK, SITE_URL
-from .utils import get_db
+from .utils import get_db, get_steem_conn
 
 logger = logging.getLogger('steemrocks')
 logger.setLevel(logging.DEBUG)
@@ -113,7 +114,7 @@ class Operation(object):
                 raw_data = json.loads(self.raw_data["json"])
             except Exception as e:
                 logger.error(self.raw_data["json"])
-                return 
+                return
             if raw_data and len(raw_data) == 2:
                 try:
                     return CustomJson(
@@ -223,7 +224,7 @@ class Vote(object):
 
     @property
     def voter_link(self):
-        return "%s/@%s" % (INTERFACE_LINK, self.voter)
+        return "%s/@%s" % (SITE_URL, self.voter)
 
     @property
     def exact_action(self):
@@ -489,6 +490,28 @@ class Account:
         return round(self.sp + self.received_sp - self.delegated_sp, 2)
 
     @property
+    def worth_sp(self):
+        s = get_steem_conn()
+        b = Blockchain()
+
+        p = 10000
+        sp = self.total_sp # steem power
+        vp = 100 # voting power
+        vw = 100 # voting weight
+        tvf = float(b.info()['total_vesting_fund_steem'].replace(" STEEM", ""))
+        tvs = float(b.info()['total_vesting_shares'].replace(" VESTS", ""))
+        r = float(sp / (tvf / tvs))
+        m = float(100 * vp * (100 * vw) / p)
+        m = float((m + 49) / 50)
+        quote = float(s.get_current_median_history_price()['quote'].replace(" STEEM", ""))
+        base = float(s.get_current_median_history_price()['base'].replace(" SBD", ""))
+        o = base / quote
+        rb = float(s.get_reward_fund('post')['reward_balance'].replace(" STEEM", ""))
+        rc = float(s.get_reward_fund('post')['recent_claims'])
+        i = rb / rc
+        return "%.4f" % (r * m * 100 * i * o)
+
+    @property
     def creation_date(self):
         return parse(self.account_data['created']).date()
 
@@ -531,6 +554,9 @@ class Account:
 
         return operations
 
+    @property
+    def user_link(self):
+        return "%s/@%s" % (INTERFACE_LINK, self.username)
 
 class Delegate:
 
