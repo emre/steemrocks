@@ -3,6 +3,7 @@ from math import ceil
 import pymysql
 from flask import g
 from steem import Steem
+from steem.amount import Amount
 
 from . import settings
 
@@ -62,3 +63,11 @@ class Pagination(object):
                     yield None
                 yield num
                 last = num
+
+
+def get_payout_from_rshares(rshares, reward_balance,
+                            recent_claims, base_price):
+    fund_per_share = Amount(reward_balance).amount / float(recent_claims)
+    payout = float(rshares) * fund_per_share * Amount(base_price).amount
+
+    return payout
