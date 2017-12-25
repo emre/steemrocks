@@ -50,7 +50,7 @@ def rewards(username):
         if cashout_time < datetime.now():
             continue
 
-        if post["net_rshares"] <= 0:
+        if float(post["net_rshares"]) <= 0:
             continue
 
         posts_waiting_cashout.append(post)
