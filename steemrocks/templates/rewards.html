@@ -73,7 +73,7 @@
                            <div class="feed-element">
                                Total rewards waiting for payout: <strong>${{total_author_rewards}}</strong>
                    </div>
-                {% for reward in rewards %}
+                {% for reward in rewards|sort(attribute='elapsed_seconds') %}
 
                     <div class="feed-element">
 
@@ -90,6 +90,7 @@
                           <th scope="col">Curation</th>
                           <th scope="col">Beneficiaries</th>
                           <th scope="col">Cashout time</th>
+                          <th scope="col">Seconds</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -100,6 +101,7 @@
                           <td>${{reward.curation}}</td>
                           <td>${{reward.beneficiaries}}</td>
                             <td><em>{{reward.cashout_time}}</em></td>
+                            <td><em>{{reward.elapsed_seconds}}</em></td>
                         </tr>
                       </tbody>
                     </table>

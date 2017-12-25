@@ -62,14 +62,15 @@ def rewards(username):
     r = requests.post("http://estimator.steem.rocks/rewards.json",
                       data={"links": posts_as_str})
 
-    rewards = r.json()
+    rewards = r.json()["rewards"]
+
     total_author_rewards = round(
-        sum(r["author"] for r in rewards["rewards"]), 2)
+        sum(r["author"] for r in rewards), 2)
 
     return render_template(
         "rewards.html",
         account=account,
-        rewards=rewards["rewards"],
+        rewards=rewards,
         total_author_rewards=total_author_rewards,
     )
 
