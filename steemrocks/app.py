@@ -47,8 +47,8 @@ def rewards(username):
     posts_waiting_cashout = []
     for post in posts + comments:
         cashout_time = parse(post["cashout_time"])
-        if cashout_time < (datetime.now() - timedelta(hours=3)):
-            print(post)
+
+        if cashout_time < datetime.utcnow():
             continue
 
         if float(post["net_rshares"]) <= 0:
