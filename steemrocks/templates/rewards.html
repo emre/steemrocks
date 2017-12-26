@@ -79,24 +79,24 @@
 
                 <div class="media-body ">
 
-                  <a href="https://steemit.com/{{reward.link}}">{% if reward.is_main_post %}{{reward.title}}{%else%}{{reward.link}}{%endif%}</a>
+                  <a href="https://steemit.com/{{reward.link}}">{% if reward.is_main_post %}{{reward.title[0:100]}}{%else%}{{reward.link[0:100]}}{%endif%}</a>
+                    <span class="pull-right badge">
+                        {% if reward.is_main_post %}Post{%else%}Comment{%endif%}</span>
 
                     <table class="table">
                       <thead>
                         <tr>
-                            <th scope="col">Type</th>
                           <th scope="col">Total</th>
                           <th scope="col">Author</th>
                           <th scope="col">Curation</th>
-                          <th scope="col">Beneficiaries</th>
+                          <th scope="col">Benefs</th>
                           <th scope="col">Cashout time</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr>
-                            <td>{% if reward.is_main_post %}Post{%else%}Comment{%endif%}</td>
                           <td>${{reward.total}}</td>
-                          <td>${{reward.author}}</td>
+                            <td>${{reward.author}} <em>({{reward.sbd_amount}} SBD, {{reward.sp_amount}} SP)</em></td>
                           <td>${{reward.curation}}</td>
                           <td>${{reward.beneficiaries}}</td>
                             <td><em>{{reward.cashout_time}}</em></td>
