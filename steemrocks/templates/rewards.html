@@ -71,7 +71,24 @@
 
            <div class="feed-activity-list">
                            <div class="feed-element">
-                               Total rewards waiting for payout: <strong>${{total_author_rewards}}</strong>
+
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th scope="col">Total Payout</th>
+                          <th scope="col">Total SBD</th>
+                          <th scope="col">Total SP</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>${{total_author_rewards}}</td>
+                          <td>{{total_sbd}} SBD</td>
+                          <td>{{total_sp}} SP</td>
+                        </tr>
+                      </tbody>
+                    </table>
+
                    </div>
                 {% for reward in rewards|sort(attribute='elapsed_seconds', reverse=True) %}
 

@@ -70,11 +70,19 @@ def rewards(username):
     total_author_rewards = round(
         sum(r["author"] for r in rewards), 2)
 
+    total_sbd = round(
+        sum(r["sbd_amount"] for r in rewards), 2)
+
+    total_sp = round(
+        sum(r["sp_amount"] for r in rewards), 2)
+
     return render_template(
         "rewards.html",
         account=account,
         rewards=rewards,
         total_author_rewards=total_author_rewards,
+        total_sbd=total_sbd,
+        total_sp=total_sp,
     )
 
 
