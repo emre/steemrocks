@@ -53,6 +53,9 @@ def rewards(username):
         if float(post["net_rshares"]) <= 0:
             continue
 
+        if post["author"] != username:
+            continue
+
         posts_waiting_cashout.append(post)
 
     posts_as_str = ",".join(
