@@ -73,7 +73,7 @@
                            <div class="feed-element">
                                Total rewards waiting for payout: <strong>${{total_author_rewards}}</strong>
                    </div>
-                {% for reward in rewards|sort(attribute='elapsed_seconds') %}
+                {% for reward in rewards|sort(attribute='elapsed_seconds', reverse=True) %}
 
                     <div class="feed-element">
 
