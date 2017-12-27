@@ -1,5 +1,7 @@
 from math import ceil
 
+import json
+import requests
 import pymysql
 from flask import g
 from steem import Steem
@@ -64,6 +66,20 @@ class Pagination(object):
                 yield num
                 last = num
 
+class Coins(object):
+
+    def request_coins(self, name):
+        url="http://coincap.io/page/"+name
+        c = (requests.get(url)).text
+        return json.loads(c)
+
+    def get_coin_price(self, name, price):
+        if name == "STEEM":
+            prices = self.request_coins("STEEM")
+        elif name == "SBD":
+            prices = self.request_coins("SBD")
+
+        return "%.5f" % prices[price]
 
 def get_payout_from_rshares(rshares, reward_balance,
                             recent_claims, base_price):
