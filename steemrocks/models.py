@@ -458,6 +458,9 @@ class Account:
         regenerated_vp = diff_in_seconds * 10000 / 86400 / 5
         total_vp = (
                    self.account_data["voting_power"] + regenerated_vp) / 100
+        if total_vp > 100:
+            total_vp = 100
+
         return "%.2f" % total_vp
 
     @property
