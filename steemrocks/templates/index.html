@@ -2,26 +2,56 @@
 
 {% block content %}
 <div id="pad-wrapper">
-    <div class="col-md-6" style="margin-left: auto; margin-right: auto; float:none;">
+  <div class="col-md-6" style="margin-left: auto; margin-right: auto; float:none;">
     <div class="panel panel-default">
-    <div class="panel-heading"><strong>Steem Activity Feed</strong>  </div>
-    <div class="panel-body no-padding">
-        <div class="ibox-content profile-content">
-            <div id="search-box">
-                <form method="GET">
-                <input placeholder="Username" name="account">
-                <button class="ui icon button massive" type="submit">
-                Search
-                </form>
-                </button>
-            </div>
-
-
+    <div class="text-center">
+    <img src='https://i.imgsafe.org/28/28d4be67dd.png' alt>
+    <div class="text-center main-content"><strong>Steem Activity Feed</strong></div>
+        <div id="search-box">
+            <form method="GET">
+            <input placeholder="Username" name="account">
+            <button class="ui icon button massive" type="submit">
+              Search
+            </form>
+            </button>
         </div>
     </div>
+    <div class="main-content">
+      <table class="table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Price/USD</th>
+            <th>USD*</th>
+            <th>Euro*</th>
+            <th>Bitcoin*</th>
+            <th>Ethereum*</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>STEEM</td>
+            <td>{{coins.get_coin_price("STEEM","price")}}</td>
+            <td>{{coins.get_coin_price("STEEM","price_usd")}}</td>
+            <td>{{coins.get_coin_price("STEEM","price_eur")}}</td>
+            <td>{{coins.get_coin_price("STEEM","price_btc")}}</td>
+            <td>{{coins.get_coin_price("STEEM","price_eth")}}</td>
+          </tr>
+          <tr>
+            <td>SBD</td>
+            <td>{{coins.get_coin_price("SBD","price")}}</td>
+            <td>{{coins.get_coin_price("SBD","price_usd")}}</td>
+            <td>{{coins.get_coin_price("SBD","price_eur")}}</td>
+            <td>{{coins.get_coin_price("SBD","price_btc")}}</td>
+            <td>{{coins.get_coin_price("SBD","price_eth")}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="note">*24h Volume Weighted Average Price</p>
     </div>
     </div>
-
+  </div>
+</div>
 
 
 {% endblock %}
