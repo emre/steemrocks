@@ -69,7 +69,9 @@ class Pagination(object):
 class Coins(object):
 
     def request_coins(self, name):
-        url="http://coincap.io/page/"+name
+        base="https://min-api.cryptocompare.com/data/price?fsym="
+        compare="&tsyms=BTC,USD,EUR,ETH,LTC"
+        url=base+name+compare
         c = (requests.get(url)).text
         return json.loads(c)
 
