@@ -65,19 +65,26 @@ def rewards(username):
         ["@%s/%s" % (p["author"],
                      p["permlink"]) for p in posts_waiting_cashout])
 
-    r = requests.post("http://estimator.steem.rocks/rewards.json",
-                      data={"links": posts_as_str})
+    if posts_as_str:
 
-    rewards = r.json()["rewards"]
+        r = requests.post("http://estimator.steem.rocks/rewards.json",
+                          data={"links": posts_as_str})
 
-    total_author_rewards = round(
-        sum(r["author"] for r in rewards), 2)
+        rewards = r.json()["rewards"]
 
-    total_sbd = round(
-        sum(r["sbd_amount"] for r in rewards), 2)
+        total_author_rewards = round(
+            sum(r["author"] for r in rewards), 2)
 
-    total_sp = round(
-        sum(r["sp_amount"] for r in rewards), 2)
+        total_sbd = round(
+            sum(r["sbd_amount"] for r in rewards), 2)
+
+        total_sp = round(
+            sum(r["sp_amount"] for r in rewards), 2)
+    else:
+        rewards = []
+        total_author_rewards = 0
+        total_sbd = 0
+        total_sp = 0
 
     return render_template(
         "rewards.html",
