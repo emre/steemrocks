@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, abort, g, url_for
 
 from .tx_listener import listen
 from .models import Account
-from .utils import get_steem_conn, Pagination, get_payout_from_rshares
+from .utils import get_steem_conn, Pagination, get_payout_from_rshares, Coins
 from .settings import SITE_URL
 from dateutil.parser import parse
 from datetime import datetime, timedelta
@@ -27,9 +27,10 @@ def listen_transactions():
 
 @app.route('/')
 def index():
+    coins = Coins()
     if request.query_string and request.args.get('account'):
         return redirect('/' + request.args.get('account'))
-    return render_template('index.html')
+    return render_template('index.html', coins=coins)
 
 
 @app.route('/<username>/rewards')
