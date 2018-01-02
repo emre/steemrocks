@@ -1,5 +1,6 @@
 import logging
 import time
+import re
 
 from . import models, state
 from .utils import get_db, get_steem_conn
@@ -89,6 +90,41 @@ class TransactionListener(object):
                 saved_txs.add(operation["trx_id"])
 
             op_type, op_value = operation['op'][0:2]
+
+            if op_type == "comment":
+                mentions = re.findall(
+                    '@([a-z][a-z0-9\-]+[a-z0-9])', op_value.get("body", ""))
+                for effected in list(set(mentions)):
+                    effected = effected.replace("@", "")
+                    if "/" in effected:
+                        continue
+
+                    if not op_value.get("author") or \
+                            not op_value.get("permlink"):
+                        continue
+
+                    try:
+                        author = op_value.get("author")
+
+                        if effected == author:
+                            continue
+
+                        permlink = op_value.get("permlink")
+                        additional_op = models.Operation(
+                            self.db,
+                            transaction.id,
+                            "mention",
+                            {
+                                "author": author,
+                                "permlink": permlink,
+                                "effected": effected,
+                            },
+                            created_at=block.created_at,
+                        )
+                        additional_op.persist()
+                    except Exception as error:
+                        logger.error(error)
+
             _operation = models.Operation(
                 self.db, transaction.id,
                 op_type, op_value,

@@ -103,6 +103,8 @@ class Operation(object):
                 return Vote(self.raw_data, account=self.account)
             else:
                 logger.error(self.raw_data)
+        elif self.type == "mention":
+            return Mention(self.raw_data, account=self.account)
         elif self.type == "comment":
             if self.raw_data.get("title") or \
                     self.raw_data.get("parent_author"):
@@ -118,7 +120,7 @@ class Operation(object):
             if raw_data and len(raw_data) == 2:
                 try:
                     return CustomJson(
-                        raw_data[0], raw_data[1], account=self.account
+                        raw_data[0], raw_data[1], self.account
                     ).get_concrete_operation()
                 except KeyError:
                     return None
@@ -797,6 +799,49 @@ class DeleteComment:
     def action(self):
         return "%s deleted comment. (@%s)" % (
             self.actor, self.raw_data["permlink"])
+
+
+class Mention:
+
+    def __init__(self, raw_data, account=None):
+        self.raw_data = raw_data
+        self.account = account
+
+    @property
+    def actor(self):
+        return self.raw_data["author"]
+
+    @property
+    def effected(self):
+        return self.raw_data["effected"]
+
+    @property
+    def link(self):
+        return "%s/@%s/%s" % (
+            INTERFACE_LINK,
+            self.raw_data["author"],
+            self.raw_data["permlink"])
+
+    @property
+    def action(self):
+        actor_url = SITE_URL + '/' + self.actor
+        effected_url = SITE_URL + '/' + self.effected
+        actor_template = self.actor
+        effected_template = self.effected
+
+        if self.account == self.effected:
+            actor_template = '<a href="%s" target="_blank">%s</a>' % (
+                actor_url, self.actor)
+        elif self.account == self.actor:
+            effected_template = '<a href="%s" target="_blank">%s</a>' % (
+                effected_url, self.effected)
+
+        return "%s mentioned %s at <a href='%s'>%s</a>" % (
+            actor_template,
+            effected_template,
+            self.link,
+            self.raw_data["permlink"][0:64]
+        )
 
 
 class AccountCreateWithDelegation:

@@ -2,10 +2,10 @@ from flask import Flask, render_template, request, redirect, abort, g, url_for
 
 from .tx_listener import listen
 from .models import Account
-from .utils import get_steem_conn, Pagination, get_payout_from_rshares, Coins
+from .utils import get_steem_conn, Pagination, Coins
 from .settings import SITE_URL
 from dateutil.parser import parse
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import bleach
 import requests
