@@ -66,6 +66,7 @@ class Pagination(object):
                 yield num
                 last = num
 
+
 class Coins(object):
 
     def request_coins(self, name):
@@ -83,9 +84,42 @@ class Coins(object):
 
         return "%.5f" % prices[price]
 
+
 def get_payout_from_rshares(rshares, reward_balance,
                             recent_claims, base_price):
     fund_per_share = Amount(reward_balance).amount / float(recent_claims)
     payout = float(rshares) * fund_per_share * Amount(base_price).amount
 
     return payout
+
+
+def vests_to_sp(vests, info):
+    steem_per_mvests = (
+        Amount(info["total_vesting_fund_steem"]).amount /
+        (Amount(info["total_vesting_shares"]).amount / 1e6)
+    )
+
+    return vests / 1e6 * steem_per_mvests
+
+
+def get_curation_rewards(account, info, checkpoint_val=100):
+    total_reward_in_rshares = 0
+    total_reward_in_sp = 0
+    checkpoint = int(checkpoint_val)
+    increase_per_checkpoint = int(checkpoint_val)
+    checkpoints = []
+    history = account.history(filter_by=["curation_reward"])
+    for curation_reward in history:
+        curation_reward_rshares = Amount(curation_reward["reward"]).amount
+        total_reward_in_rshares += curation_reward_rshares
+        total_reward_in_sp += vests_to_sp(curation_reward_rshares, info)
+        if int(total_reward_in_sp) % checkpoint < 5 and \
+                int(total_reward_in_sp) >= checkpoint:
+            checkpoints.append({
+                "timestamp": curation_reward["timestamp"],
+                "block": curation_reward["block"],
+                "sub_total": round(total_reward_in_sp, 2),
+            })
+            checkpoint += increase_per_checkpoint
+
+    return total_reward_in_sp, total_reward_in_rshares, checkpoints

@@ -2,7 +2,8 @@ from flask import Flask, render_template, request, redirect, abort, g, url_for
 
 from .tx_listener import listen
 from .models import Account
-from .utils import get_steem_conn, Pagination, Coins
+from steem.account import Account as SteemAccount
+from .utils import get_steem_conn, Pagination, Coins, get_curation_rewards
 from .settings import SITE_URL
 from dateutil.parser import parse
 from datetime import datetime
@@ -115,6 +116,28 @@ def profile(username, page):
     return render_template(
         'profile.html', account=account,
         operations=operations, site_url=SITE_URL, pagination=pagination)
+
+
+@app.route('/<username>/curation_rewards')
+@app.route('/@<username>/curation_rewards')
+def curation_rewards(username):
+    if username.startswith("@"):
+        username = username.replace("@", "")
+    s = get_steem_conn()
+    account = Account(username, s).set_account_deta()
+    info = s.get_dynamic_global_properties()
+    checkpoint_val = request.args.get("checkpoint")
+    total_sp, total_rshares, checkpoints = get_curation_rewards(
+        SteemAccount(username, steemd_instance=s),
+        info,
+        checkpoint_val=checkpoint_val)
+    return render_template(
+        "curation_rewards.html",
+        account=account,
+        total_sp=round(total_sp, 2),
+        total_rshares=total_rshares,
+        checkpoints=checkpoints,
+    )
 
 
 @app.teardown_appcontext
