@@ -120,6 +120,13 @@
                 {% elif operation.type =="claim_reward_balance" %}
                     {{ operation.sub_operation.action }}
 
+                {% elif operation.type =="mention" %}
+                   {% autoescape false %}
+
+                    {{ operation.sub_operation.action }}
+                    {% endautoescape %}
+
+
                  {%elif operation.type == "producer_reward" %}
                     {{ operation.sub_operation.action}}
 
