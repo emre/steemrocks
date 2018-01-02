@@ -43,7 +43,7 @@ def rewards(username):
 
     posts = s.get_discussions_by_blog({"limit": 50, "tag": username})
     comments = s.get_discussions_by_comments(
-        {"limit": 50, "start_author": username})
+        {"limit": 100, "start_author": username})
 
     posts_waiting_cashout = []
     for post in posts + comments:
