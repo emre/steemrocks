@@ -9,7 +9,8 @@
     <div class="text-center main-content"><strong>Steem Activity Feed</strong></div>
         <div id="search-box">
             <form method="GET">
-            <input placeholder="Username" name="account">
+
+              <label for="autocomplete"></label><input placeholder="Username" name="account" id="autocomplete">
             <button class="ui icon button massive" type="submit">
               Search
             </form>
@@ -22,4 +23,25 @@
 </div>
 
 
+{% endblock %}
+
+{%block extra_head %}
+      <style>
+      .ui-menu .ui-menu-item a{
+        height:18px;
+        font-size:14px;
+      }
+      </style>
+      <link href = "https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css"
+         rel = "stylesheet">
+      <script src = "https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+      <script>
+         $(function() {
+            $( "#autocomplete" ).autocomplete({
+               minLength:2,
+               delay:500,
+               source: "http://autocomplete.steem.rocks/"
+            });
+         });
+      </script>
 {% endblock %}
