@@ -28,10 +28,9 @@ def listen_transactions():
 
 @app.route('/')
 def index():
-    coins = Coins()
     if request.query_string and request.args.get('account'):
         return redirect('/' + request.args.get('account'))
-    return render_template('index.html', coins=coins)
+    return render_template('index.html')
 
 
 @app.route('/<username>/rewards')
