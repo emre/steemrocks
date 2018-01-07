@@ -497,14 +497,13 @@ class Account:
     @property
     def worth_sp(self):
         s = get_steem_conn()
-        b = Blockchain()
-
+        info = state.load_state()
         p = 10000
         sp = self.total_sp # steem power
         vp = 100 # voting power
         vw = 100 # voting weight
-        tvf = float(b.info()['total_vesting_fund_steem'].replace(" STEEM", ""))
-        tvs = float(b.info()['total_vesting_shares'].replace(" VESTS", ""))
+        tvf = float(info['total_vesting_fund_steem'].replace(" STEEM", ""))
+        tvs = float(info['total_vesting_shares'].replace(" VESTS", ""))
         r = float(sp / (tvf / tvs))
         m = float(100 * vp * (100 * vw) / p)
         m = float((m + 49) / 50)
