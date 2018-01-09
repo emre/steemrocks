@@ -1,0 +1,92 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div id="pad-wrapper">
+    {% include "left_menu.html" %}
+
+    <div class="col-md-8">
+    <div class="panel panel-default">
+        <div class="panel-heading"><strong>Outgoing Delegations</strong></div>
+    <div class="panel-body">
+
+
+
+        <div class="ibox-content">
+
+           <div class="feed-activity-list">
+                           <div class="feed-element">
+
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th scope="col">To</th>
+                          <th scope="col">MVESTS</th>
+                          <th scope="col">SP</th>
+                          <th scope="col">Created At</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {% for delegation in outgoing_delegations%}
+                       <tr>
+                          <td>
+                              <a href="https://steemit.com/@{{delegation.delegatee}}"
+                                 target="_blank">@{{delegation.delegatee}}</a></td>
+                          <td>{{delegation.vesting_shares}}</td>
+                          <td>{{delegation.sp}}</td>
+                          <td>{{delegation.min_delegation_time}}</td>
+                        </tr>
+                      {% endfor %}
+                      </tbody>
+                    </table>
+
+                   </div>
+
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+
+        <div class="col-md-8">
+    <div class="panel panel-default">
+        <div class="panel-heading"><strong>Expiring Delegations</strong></div>
+    <div class="panel-body">
+
+
+
+        <div class="ibox-content">
+
+           <div class="feed-activity-list">
+                           <div class="feed-element">
+
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th scope="col">VESTS</th>
+                          <th scope="col">SP</th>
+                          <th scope="col">Expiring At</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {% for delegation in expiring_delegations %}
+                       <tr>
+                          <td>{{delegation.vesting_shares}}</td>
+                          <td>{{delegation.sp}}</td>
+                          <td>{{delegation.expiration}}</td>
+                        </tr>
+                      {% endfor %}
+                      </tbody>
+                    </table>
+
+                   </div>
+
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+
+    </div>
+
+
+{% endblock %}
