@@ -2,63 +2,7 @@
 
 {% block content %}
 <div id="pad-wrapper">
-    <div class="col-md-4">
-    <div class="panel panel-default">
-        <div class="panel-heading"><strong> <a href="/">Home</a></strong> | <strong>Profile</strong></div>
-    <div class="panel-body no-padding">
-        <div class="ibox-content no-padding border-left-right">
-            <img alt="image" class="img-responsive" src="{{account.avatar}}">
-        </div>
-        <div class="ibox-content profile-content">
-            <h3><strong>{{account.account_data.name}}</strong></h3>
-            <p>Reputation point: {{account.reputation}}</p>
-            <p><i class="fa fa-map-marker"></i> {{ account.location}}</p>
-            {% if account.about %}
-                <p>{{account.about}}</p>
-            {% endif %}
-
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Steem</th>
-                <th>SBD</th>
-                <th>Vesting Shares</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>{{account.balances.STEEM}}</td>
-                <td>{{account.balances.SBD}}</td>
-                <td>{{account.balances.VESTS}}</td>
-              </tr>
-
-            </tbody>
-          </table>
-
-            <h5><strong>Effective SP</strong></h5>
-            <p>{{account.total_sp}} <i>= {{account.sp}} + {{account.received_sp}} - {{ account.delegated_sp}}</i></p>
-
-            <h5><strong>Worth of a 100% VP upvote </strong></h5>
-            <p>${{account.worth_sp}}</p>
-
-            <h5><strong>Voting power</strong></h5>
-
-            <div class="progress">
-              <div class="progress-bar" role="progressbar" aria-valuenow="{{account.voting_power}}"
-              aria-valuemin="0" aria-valuemax="100" style="width:{{account.voting_power}}%">
-                 {{account.voting_power}}%
-              </div>
-            </div>
-
-            <h5><strong>Account creation date</strong></h5>
-            <p>{{account.creation_date}}</p>
-            <br>
-            <center><p><i>View on </i><a href="{{account.user_link}}">Steemit</a></p></center>
-
-        </div><!-- /profile-content -->
-    </div>
-    </div>
-    </div>
+    {% include "left_menu.html" %}
 
     <div class="col-md-8">
     <div class="panel panel-default">
