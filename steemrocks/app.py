@@ -3,10 +3,12 @@ from flask import Flask, render_template, request, redirect, abort, g, url_for
 from .tx_listener import listen
 from .models import Account
 from steem.account import Account as SteemAccount
-from .utils import get_steem_conn, Pagination, Coins, get_curation_rewards
+from steem.amount import Amount
+from .utils import get_steem_conn, Pagination, vests_to_sp, get_curation_rewards
 from .settings import SITE_URL
+from . import state
 from dateutil.parser import parse
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import bleach
 import requests
@@ -136,6 +138,51 @@ def curation_rewards(username):
         total_sp=round(total_sp, 2),
         total_rshares=total_rshares,
         checkpoints=checkpoints,
+    )
+
+@app.route('/<username>/delegations')
+@app.route('/@<username>/delegations')
+def delegations(username):
+    if username.startswith("@"):
+        username = username.replace("@", "")
+    s = get_steem_conn()
+    account = Account(username, s).set_account_deta()
+
+    outgoing_delegations = s.get_vesting_delegations(username, 0, 100)
+    eight_days_ago = datetime.utcnow() - timedelta(days=8)
+    expiring_delegations = s.get_expiring_vesting_delegations(
+        username,
+        eight_days_ago.strftime("%Y-%m-%dT%H:%M:%S"),
+        1000
+    )
+    info = state.load_state()
+    outgoing_delegations_fixed = []
+    for outgoing_delegation in outgoing_delegations:
+        created_at = parse(outgoing_delegation["min_delegation_time"])
+        amount = Amount(outgoing_delegation["vesting_shares"]).amount
+        outgoing_delegation.update({
+            "min_delegation_time": created_at,
+            "sp": round(vests_to_sp(amount, info), 2),
+            "vesting_shares": round(amount / 1e6, 4),
+        })
+        outgoing_delegations_fixed.append(outgoing_delegation)
+
+    expiring_delegations_fixed = []
+    for expiring_delegation in expiring_delegations:
+        created_at = parse(expiring_delegation["expiration"])
+        amount = Amount(expiring_delegation["vesting_shares"]).amount
+        expiring_delegation.update({
+            "expiration": created_at,
+            "sp": round(vests_to_sp(amount, info), 2),
+            "vesting_shares": round(amount / 1e6, 4),
+        })
+        expiring_delegations_fixed.append(expiring_delegation)
+
+    return render_template(
+        "delegations.html",
+        account=account,
+        outgoing_delegations=outgoing_delegations_fixed,
+        expiring_delegations=expiring_delegations,
     )
 
 
