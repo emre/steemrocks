@@ -898,7 +898,7 @@ class CurationReward:
     @property
     def action(self):
         link = '<a href="%s">%s</a>' % (
-            self.raw_data["comment_permlink"],
+            self.link,
             self.raw_data["comment_permlink"])
         return "%s got curation reward: %s for %s" % (
             self.actor,
