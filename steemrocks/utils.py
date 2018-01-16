@@ -6,11 +6,12 @@ import pymysql
 from flask import g
 from steem import Steem
 from steem.amount import Amount
+from pymongo import MongoClient
 
 from . import settings
 
 _steem_connection = None
-
+_mongo_connection = None
 
 def connect_db():
     conn = pymysql.connect(*settings.DB_INFO, charset='utf8')
@@ -32,6 +33,20 @@ def get_steem_conn():
     if not _steem_connection:
         _steem_connection = Steem(nodes=settings.NODES)
     return _steem_connection
+
+
+def get_mongo_conn():
+    global _mongo_connection
+    if not _mongo_connection:
+        _mongo_connection = MongoClient(
+            'mongo1.steemdata.com',
+             username='steemit',
+             password='steemit',
+             authSource='SteemData',
+             authMechanism='SCRAM-SHA-1'
+        )
+    return _mongo_connection
+
 
 
 class Pagination(object):

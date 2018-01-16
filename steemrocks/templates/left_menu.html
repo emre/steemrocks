@@ -32,7 +32,7 @@
           </table>
 
             <h5><strong>Effective SP</strong></h5>
-            <p>{{account.total_sp}} <i>= {{account.sp}} + {{account.received_sp}} - <a href="/{{account.username}}/delegations">{{ account.delegated_sp}}</a></i></p>
+            <p>{{account.total_sp}} <i>= {{account.sp}} + <a href="/{{account.username}}/delegations/in">{{account.received_sp}}</a> - <a href="/{{account.username}}/delegations/out">{{ account.delegated_sp}}</a></i></p>
 
             <h5><strong>Worth of a 100% VP upvote </strong></h5>
             <p>${{account.worth_sp}}</p>

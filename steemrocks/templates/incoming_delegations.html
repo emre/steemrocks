@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div id="pad-wrapper">
+    {% include "left_menu.html" %}
+
+    <div class="col-md-8">
+    <div class="panel panel-default">
+        <div class="panel-heading"><strong>Delegations</strong></div>
+    <div class="panel-body">
+
+
+        <h4>Incoming Delegations</h4>
+
+        <div class="ibox-content">
+
+           <div class="feed-activity-list">
+                           <div class="feed-element">
+
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th scope="col">From</th>
+                          <th scope="col">MVESTS</th>
+                          <th scope="col">SP</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {% for delegation in incoming_delegations|sort(attribute='sp', reverse=True)%}
+                       <tr>
+                          <td>
+                              <a href="https://steemit.com/@{{delegation.delegatee}}"
+                                 target="_blank">@{{delegation.from}}</a></td>
+                          <td>{{delegation.vesting_shares}}</td>
+                          <td>{{delegation.sp}}</td>
+                        </tr>
+                      {% endfor %}
+                      </tbody>
+                    </table>
+
+                   </div>
+
+            </div>
+        </div>
+
+    </div>
+    </div>
+    </div>
+
+
+    </div>
+
+
+{% endblock %}

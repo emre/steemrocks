@@ -4,7 +4,10 @@ from .tx_listener import listen
 from .models import Account
 from steem.account import Account as SteemAccount
 from steem.amount import Amount
-from .utils import get_steem_conn, Pagination, vests_to_sp, get_curation_rewards
+from .utils import (
+    get_steem_conn, Pagination, vests_to_sp, get_curation_rewards,
+    get_mongo_conn
+)
 from .settings import SITE_URL
 from . import state
 from dateutil.parser import parse
@@ -58,8 +61,6 @@ def rewards(username):
             continue
 
         if post["author"] != username:
-            print(post["permlink"], '??')
-
             continue
 
         posts_waiting_cashout.append(post)
@@ -140,8 +141,8 @@ def curation_rewards(username):
         checkpoints=checkpoints,
     )
 
-@app.route('/<username>/delegations')
-@app.route('/@<username>/delegations')
+@app.route('/<username>/delegations/out')
+@app.route('/@<username>/delegations/out')
 def delegations(username):
     if username.startswith("@"):
         username = username.replace("@", "")
@@ -183,6 +184,45 @@ def delegations(username):
         account=account,
         outgoing_delegations=outgoing_delegations_fixed,
         expiring_delegations=expiring_delegations,
+    )
+
+@app.route('/<username>/delegations/in')
+@app.route('/@<username>/delegations/in')
+def incoming_delegations(username):
+    if username.startswith("@"):
+        username = username.replace("@", "")
+    s = get_steem_conn()
+    mongo_conn = get_mongo_conn()
+
+    account = Account(username, s).set_account_deta()
+    collection = mongo_conn["SteemData"]["Operations"]
+    info = state.load_state()
+
+    operations = list(collection.find({
+        "type": "delegate_vesting_shares",
+        "delegatee": username,
+    }).sort("timestamp"))
+
+    delegation_map = {}
+    for delegation in operations:
+        delegation_map.update(
+            {delegation["delegator"]: delegation["vesting_shares"]["amount"]})
+
+    delegation_map = {k: float(v)
+                      for k, v in delegation_map.items() if float(v) > 0}
+
+    incoming_delegations = []
+    for from_account, vests in delegation_map.items():
+        incoming_delegations.append({
+            "from": from_account,
+            "sp": round(vests_to_sp(vests, info), 2),
+            "vesting_shares":  round(vests / 1e6, 4),
+        })
+
+    return render_template(
+        "incoming_delegations.html",
+        incoming_delegations=incoming_delegations,
+        account=account,
     )
 
 
