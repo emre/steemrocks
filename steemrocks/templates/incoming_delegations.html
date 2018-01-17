@@ -29,7 +29,7 @@
                       {% for delegation in incoming_delegations|sort(attribute='sp', reverse=True)%}
                        <tr>
                           <td>
-                              <a href="https://steemit.com/@{{delegation.delegatee}}"
+                              <a href="https://steemit.com/@{{delegation.from}}"
                                  target="_blank">@{{delegation.from}}</a></td>
                           <td>{{delegation.vesting_shares}}</td>
                           <td>{{delegation.sp}}</td>
