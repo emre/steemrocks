@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, abort, g, url_for
 
 from .tx_listener import listen
+from .garbage_collector import gc
 from .models import Account
 from steem.account import Account as SteemAccount
 from steem.amount import Amount
@@ -30,6 +31,14 @@ def listen_transactions():
     """
     listen()
 
+@app.cli.command()
+def garbage_collector():
+    """
+    This command starts listening transactions on the network and saves them\
+    into the database.
+    $ flask listen_transactions
+    """
+    gc()
 
 @app.route('/')
 def index():
