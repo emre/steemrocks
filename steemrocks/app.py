@@ -13,6 +13,7 @@ from .settings import SITE_URL
 from . import state
 from dateutil.parser import parse
 from datetime import datetime, timedelta
+from time import time
 
 import bleach
 import requests
@@ -93,19 +94,40 @@ def rewards(username):
 
         total_sp = round(
             sum(r["sp_amount"] for r in rewards), 2)
+
+        total_usd = int(round(
+            sum(r["usd_amount"] for r in rewards), 0))
     else:
         rewards = []
         total_author_rewards = 0
         total_sbd = 0
         total_sp = 0
+        total_usd = 0
+
+    rewards_fixed = []
+    for reward in rewards:
+        cashout_time = parse(reward["cashout_time"]).timestamp()
+        diff = (cashout_time - time()) / 3600
+        if diff < 1:
+            diff = diff * 60
+            until_text = "in %s mins" % int(diff)
+        elif diff > 24:
+            diff = diff / 24
+            until_text = "in %s days" % int(diff)
+        else:
+            until_text = "in %s hours" % int(diff)
+
+        reward["until"] = until_text
+        rewards_fixed.append(reward)
 
     return render_template(
         "rewards.html",
         account=account,
-        rewards=rewards,
+        rewards=rewards_fixed,
         total_author_rewards=total_author_rewards,
         total_sbd=total_sbd,
         total_sp=total_sp,
+        total_usd=total_usd,
     )
 
 

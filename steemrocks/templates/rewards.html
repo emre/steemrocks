@@ -27,7 +27,7 @@
                       <tbody>
                         <tr>
                           <td>${{total_author_rewards}}</td>
-                          <td>{{total_sbd}} SBD</td>
+                          <td>{{total_sbd}} SBD ({{total_usd}} USD)</td>
                           <td>{{total_sp}} SP</td>
                         </tr>
                       </tbody>
@@ -40,7 +40,8 @@
 
                 <div class="media-body ">
 
-                  <a href="https://steemit.com/{{reward.link}}">{% if reward.is_main_post %}{{reward.title[0:100]}}{%else%}{{reward.link[0:100]}}{%endif%}</a>
+                  <a href="https://steemit.com/{{reward.link}}">
+                      {% if reward.is_main_post %}{{reward.title[0:100]}}{%else%}{{reward.link[0:50]}}{%endif%}</a>
                     <span class="pull-right badge">
                         {% if reward.is_main_post %}Post{%else%}Comment{%endif%}</span>
 
@@ -51,16 +52,31 @@
                           <th scope="col">Author</th>
                           <th scope="col">Curation</th>
                           <th scope="col">Benefs</th>
-                          <th scope="col">Cashout time</th>
+                          <th scope="col">Payout</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr>
                           <td>${{reward.total}}</td>
-                            <td>${{reward.author}} <em>({{reward.sbd_amount}} SBD, {{reward.sp_amount}} SP)</em></td>
+                          <!--<td>${{reward.author}} <em>({{reward.sbd_amount}} SBD, {{reward.sp_amount}} SP)</em></td>-->
+                          <td>
+                              <table class="table">
+                                <tr>
+                                  <th scope="col">Total</th>
+                                  <th scope="col">SBD</th>
+                                  <th scope="col">SP</th>
+                                  <th scope="col">USD</th>
+                                </tr>
+
+                                <td>${{reward.author}}</td>
+                                <td>{{reward.sbd_amount}}</td>
+                                <td>{{reward.sp_amount}}</td>
+                                <td>{{reward.usd_amount}}</td>
+                              </table>
+                          </td>
                           <td>${{reward.curation}}</td>
                           <td>${{reward.beneficiaries}}</td>
-                            <td><em>{{reward.cashout_time}}</em></td>
+                          <td><em>{{reward.until}}</em></td>
                         </tr>
                       </tbody>
                     </table>
