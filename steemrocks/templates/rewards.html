@@ -41,24 +41,19 @@
                 <div class="media-body ">
 
                   <a href="https://steemit.com/{{reward.link}}">
-                      {% if reward.is_main_post %}{{reward.title[0:100]}}{%else%}{{reward.link[0:50]}}{%endif%}</a>
-                    <span class="pull-right badge">
-                        {% if reward.is_main_post %}Post{%else%}Comment{%endif%}</span>
+                      {% if reward.is_main_post %}Post: {{reward.title[0:64]}}{%else%}Comment: {{reward.link[0:40]}}{%endif%}</a>
+                    <p><i>Payment {{reward.until}}. Curation shares: {{reward.curation}} SP. {% if rewards.beneficiaries %}Beneficiaries: {{reward.beneficiaries}} SP.{% endif %} </i></p>
 
                     <table class="table">
                       <thead>
                         <tr>
                           <th scope="col">Total</th>
                           <th scope="col">Author</th>
-                          <th scope="col">Curation</th>
-                          <th scope="col">Benefs</th>
-                          <th scope="col">Payout</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr>
                           <td>${{reward.total}}</td>
-                          <!--<td>${{reward.author}} <em>({{reward.sbd_amount}} SBD, {{reward.sp_amount}} SP)</em></td>-->
                           <td>
                               <table class="table">
                                 <tr>
@@ -74,9 +69,6 @@
                                 <td>{{reward.usd_amount}}</td>
                               </table>
                           </td>
-                          <td>${{reward.curation}}</td>
-                          <td>${{reward.beneficiaries}}</td>
-                          <td><em>{{reward.until}}</em></td>
                         </tr>
                       </tbody>
                     </table>
