@@ -48,7 +48,6 @@ def get_mongo_conn():
     return _mongo_connection
 
 
-
 class Pagination(object):
 
     def __init__(self, page, per_page, total_count):
@@ -138,3 +137,11 @@ def get_curation_rewards(account, info, checkpoint_val=100):
             checkpoint += increase_per_checkpoint
 
     return total_reward_in_sp, total_reward_in_rshares, checkpoints
+
+
+def hbytes(num):
+    for x in ['bytes','KB','MB','GB']:
+        if num < 1024.0:
+            return "%3.1f%s" % (num, x)
+        num /= 1024.0
+    return "%3.1f%s" % (num, 'TB')
