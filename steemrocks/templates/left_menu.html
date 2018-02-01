@@ -46,6 +46,17 @@
               </div>
             </div>
 
+             <h5><strong>Bandwidth remaining</strong>
+                 <sup>{{account.bandwidth[0]}} {{account.bandwidth[1]}}</sup>
+</h5>
+            <div class="progress">
+              <div class="progress-bar" role="progressbar" aria-valuenow="{{account.voting_power}}"
+              aria-valuemin="0" aria-valuemax="100" style="width:{{account.voting_power}}%">
+                 {{account.bandwidth[3]}}%
+              </div>
+            </div>
+
+
             <h5><strong>Account creation date</strong></h5>
             <p>{{account.creation_date}}</p>
             <br>

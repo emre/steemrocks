@@ -7,11 +7,10 @@ from datetime import datetime
 
 from dateutil.parser import parse
 from steem.amount import Amount
-from steem.blockchain import Blockchain
 
 from . import state
 from .settings import INTERFACE_LINK, SITE_URL
-from .utils import get_db, get_steem_conn
+from .utils import get_db, get_steem_conn, hbytes
 
 logger = logging.getLogger('steemrocks')
 logger.setLevel(logging.DEBUG)
@@ -405,6 +404,7 @@ class Account:
         self.account_data = None
         self.json_metadata = None
         self.db_conn = db_conn or get_db()
+        self._bandwidth = None
 
     def set_account_deta(self):
         self.account_data = self.steem.get_account(self.username)
@@ -474,6 +474,54 @@ class Account:
         if rep < 0:
             score = 50 - score
         return round(score, precision)
+
+    @property
+    def bandwidth(self):
+        if self._bandwidth:
+            return self._bandwidth
+
+        global_data = state.load_state()
+        received_vesting_shares = Amount(
+            self.account_data["received_vesting_shares"]).amount
+        vesting_shares = Amount(
+            self.account_data["vesting_shares"]).amount
+        max_virtual_bandwidth = float(global_data["max_virtual_bandwidth"])
+        total_vesting_shares = Amount(
+            global_data["total_vesting_shares"]).amount
+
+        delegated_vesting_shares = Amount(
+            self.account_data["delegated_vesting_shares"]
+        ).amount
+
+        allocated_bandwidth = (max_virtual_bandwidth * (
+            vesting_shares + received_vesting_shares - delegated_vesting_shares
+        ) / total_vesting_shares)
+
+        total_seconds = 604800
+        bw_updated = parse(self.account_data["last_bandwidth_update"])
+        diff = (datetime.utcnow() - bw_updated).total_seconds()
+        average_bandwidth = float(
+            self.account_data["average_bandwidth"])
+
+        used_bandwidth = 0
+        if diff < total_seconds:
+            used_bandwidth = (((total_seconds - diff)
+                               * average_bandwidth) / total_seconds)
+
+        used_bandwidth = used_bandwidth / 1000000
+        allocated_bandwidth = allocated_bandwidth / 1000000
+        used_bandwidth_percent = 100 * used_bandwidth / allocated_bandwidth
+        free_bandwidth_percent = round(
+            (100 - used_bandwidth_percent), 2)
+
+        self._bandwidth = (
+            hbytes(allocated_bandwidth - used_bandwidth),
+            hbytes(allocated_bandwidth),
+            hbytes(used_bandwidth_percent),
+            free_bandwidth_percent
+        )
+
+        return self._bandwidth
 
     @property
     def sp(self):
