@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+
+{% block extra_head %}
+
+<style>
+.bw-progress {
+  overflow: hidden;
+  list-style: none;
+}
+
+.bw-progress .bw-item {
+  display: block;
+  float: left;
+  margin-left:0px !important;
+  height: 84px;
+}
+</style>
+
+<script>
+    $.fn.progress = function (data) {
+	var $el = $(this).addClass('bw-progress');
+  $el.each(function () {
+  	$el.html('');
+    var _totalValue = Object.values(data).reduce(function (a, b) {
+    	return a + b;
+    }, 0);
+		for (var _color in data) {
+    	var _value = data[_color];
+      var _percentage = (100 * _value) / _totalValue;
+      $el.append($('<li/>').addClass('bw-item')
+      	.css('background-color', _color)
+        .css('color', 'white')
+        .css('width', _percentage + '%')
+      )
+    }
+	});
+};
+
+</script>
+
+
+{% endblock %}
+{% block content %}
+<div id="pad-wrapper">
+    {% include "left_menu.html" %}
+
+    <div class="col-md-8">
+    <div class="panel">
+        <div class="panel-heading"><strong>Bandwidth</strong></div>
+    <div class="panel-body">
+        <ul id="myProgress" style="padding-left: 0px;"></ul>
+
+        <p>This account has {{account.bandwidth[1]}}
+            bandwidth allocated  and used {{account.bandwidth[2]}} of it.
+        There is {{account.bandwidth[0]}} left. If the network were on the perfect
+            condition, user's total bandwidth could be {{account.bandwidth[7]}}.</p>
+    </div>
+    </div>
+    </div>
+
+
+    </div>
+
+<script>
+$('#myProgress').progress({
+  "#ff5050": {{account.bandwidth[4]}},
+  "#33cc33": {{account.bandwidth[5]}},
+  "#42b6f4": {{account.bandwidth[6]}}
+});
+</script>
+{% endblock %}
