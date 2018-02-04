@@ -256,6 +256,16 @@ def incoming_delegations(username):
         account=account,
     )
 
+@app.route('/<username>/bandwidth')
+@app.route('/@<username>/bandwidth')
+def bandwidth(username):
+    if username.startswith("@"):
+        username = username.replace("@", "")
+    s = get_steem_conn()
+
+    account = Account(username, s).set_account_deta()
+    return render_template("bandwidth.html", account=account)
+
 
 @app.teardown_appcontext
 def close_db(error):

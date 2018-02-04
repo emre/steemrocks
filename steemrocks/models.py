@@ -514,11 +514,25 @@ class Account:
         free_bandwidth_percent = round(
             (100 - used_bandwidth_percent), 2)
 
+        current_reserve_ratio = global_data["current_reserve_ratio"]
+        max_reserve_ratio = 200000000
+
+        bandwidth_on_max_capacity = allocated_bandwidth * \
+                                    (max_reserve_ratio / current_reserve_ratio)
+
+        left_bw = int(allocated_bandwidth - used_bandwidth)
+        if left_bw < 0:
+            left_bw = 0
+
         self._bandwidth = (
-            hbytes(allocated_bandwidth - used_bandwidth),
+            hbytes(left_bw),
             hbytes(allocated_bandwidth),
-            hbytes(used_bandwidth_percent),
-            free_bandwidth_percent
+            hbytes(allocated_bandwidth - left_bw),
+            free_bandwidth_percent,
+            int(used_bandwidth),
+            left_bw,
+            int(bandwidth_on_max_capacity - allocated_bandwidth),
+            hbytes(bandwidth_on_max_capacity - allocated_bandwidth)
         )
 
         return self._bandwidth
