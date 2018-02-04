@@ -1,4 +1,4 @@
-steemrocks/templates/bandwidth.html import json
+import json
 import logging
 import math
 import time
