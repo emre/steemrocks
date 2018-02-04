@@ -1,4 +1,4 @@
-import json
+steemrocks/templates/bandwidth.html import json
 import logging
 import math
 import time
@@ -532,7 +532,8 @@ class Account:
             int(used_bandwidth),
             left_bw,
             int(bandwidth_on_max_capacity - allocated_bandwidth),
-            hbytes(bandwidth_on_max_capacity - allocated_bandwidth)
+            hbytes(bandwidth_on_max_capacity - allocated_bandwidth),
+            hbytes(used_bandwidth),
         )
 
         return self._bandwidth
