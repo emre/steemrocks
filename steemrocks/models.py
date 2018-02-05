@@ -537,8 +537,6 @@ class Account:
             int(allocated_bandwidth),
         )
 
-        print(allocated_bandwidth, bandwidth_on_max_capacity)
-
         return self._bandwidth
 
     @property
