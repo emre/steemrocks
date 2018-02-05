@@ -48,12 +48,33 @@
     <div class="panel">
         <div class="panel-heading"><strong>Bandwidth</strong></div>
     <div class="panel-body">
-        <ul id="myProgress" style="padding-left: 0px;"></ul>
+        <h5>Usage</h5>
+        <ul id="myProgress1" style="padding-left: 0px;"></ul>
 
         <p>This account has {{account.bandwidth[1]}}
             bandwidth allocated  and used {{account.bandwidth[8]}} of it.
-        There is {{account.bandwidth[0]}} left. If the network were on the perfect
-            condition, user's total bandwidth could be {{account.bandwidth[7]}}.</p>
+</p>
+    </div>
+        <div class="panel-body">
+                        <h5>Potential bandwith allocation</h5>
+
+        <ul id="myProgress2" style="padding-left: 0px;"></ul>
+
+        <p>This account has {{account.bandwidth[1]}}
+            bandwidth allocated. If the network was on the perfect condition, it could have {{account.bandwidth[7]}} more bandwith
+            allocated.
+</p>
+    </div>
+
+                <div class="panel-body">
+                        <h5>Overall Scale</h5>
+
+        <ul id="myProgress3" style="padding-left: 0px;"></ul>
+
+        <p>This account has {{account.bandwidth[1]}}
+            bandwidth allocated and used {{account.bandwidth[2]}}. If the network was on the perfect condition, it could have {{account.bandwidth[7]}} more bandwith
+            allocated.
+</p>
     </div>
     </div>
     </div>
@@ -62,7 +83,17 @@
     </div>
 
 <script>
-$('#myProgress').progress({
+$('#myProgress1').progress({
+  "#ff5050": {{account.bandwidth[4]}},
+  "#33cc33": {{account.bandwidth[5]}}
+});
+
+$('#myProgress2').progress({
+  "#33cc33": {{account.bandwidth[9]}},
+  "#42b6f4": {{account.bandwidth[6]}}
+});
+
+$('#myProgress3').progress({
   "#ff5050": {{account.bandwidth[4]}},
   "#33cc33": {{account.bandwidth[5]}},
   "#42b6f4": {{account.bandwidth[6]}}
