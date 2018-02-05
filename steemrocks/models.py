@@ -531,7 +531,7 @@ class Account:
             free_bandwidth_percent,
             int(used_bandwidth),
             left_bw,
-            int(bandwidth_on_max_capacity),
+            int(bandwidth_on_max_capacity) - int(allocated_bandwidth),
             hbytes(bandwidth_on_max_capacity - allocated_bandwidth),
             hbytes(used_bandwidth),
             int(allocated_bandwidth),
