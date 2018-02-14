@@ -14,7 +14,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 -- -----------------------------------------------------
 -- Schema
 -- -----------------------------------------------------
-DROP SCHEMA `steemrocks`;
+DROP SCHEMA IF EXISTS `steemrocks`;
 CREATE SCHEMA IF NOT EXISTS `steemrocks` DEFAULT CHARACTER SET utf8 ;
 USE `steemrocks` ;
 
