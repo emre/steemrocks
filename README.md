@@ -11,7 +11,7 @@ $ vim steemrocks/local_settings.py # edit accordingly
 $ pip install -r requirements.txt
 ```
 
-#### Database import
+##### Database import
 
 Database creation queries located under the sql directory. Just import it
 to your mySQL database.
@@ -23,12 +23,13 @@ Installation is done. steemrocks has two seperate processes.
 
 ##### Transaction Listener Process
 ```
+cd [steemrocks_directory]
 $ FLASK_APP=app.py flask listen_transactions
 ```
 
 This process listens transactions and put them into the database. By default
 It will start listening from the latest block. If you want to specify a starting
-block, you should edit ~/.steemrocks/checkpoint file (create it, if it does not exists) 
+block, you should edit ~/.steemrocks/checkpoint file (create it, if it does not exists)
 and put the block number here.
 
 You should see something like that:
@@ -41,7 +42,7 @@ In development environment:
 
 ```
 cd [steemrocks_directory]
-FLASK_APP=app.py run
+FLASK_APP=app.py flask run
 ```
 
 For production, you can use gunicorn:
@@ -49,5 +50,3 @@ For production, you can use gunicorn:
 ```
 /gunicorn steemrocks.app:app --bind 0.0.0.0:[PORT_NUMBER]
 ```
-
-
