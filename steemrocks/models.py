@@ -107,9 +107,9 @@ class Operation(object):
         elif self.type == "comment":
             if self.raw_data.get("title") or \
                     self.raw_data.get("parent_author"):
-                return Comment(self.raw_data)
+                return Comment(self.raw_data, account=self.account)
             elif self.raw_data.get("author") and self.raw_data.get("permlink"):
-                return Comment(self.raw_data)
+                return Comment(self.raw_data, account=self.account)
         elif self.type == "custom_json":
             try:
                 raw_data = json.loads(self.raw_data["json"])
@@ -247,7 +247,7 @@ class Vote(object):
 
 
 class Comment(object):
-    def __init__(self, raw_data):
+    def __init__(self, raw_data, account=None):
         self.author = raw_data.get("author")
         self.permlink = raw_data.get("permlink")
         self.parent_author = raw_data.get("parent_author")
@@ -255,6 +255,7 @@ class Comment(object):
         self.title = raw_data.get("title")
         self.body = raw_data.get("body")
         self.json_metadata = raw_data.get("json_metadata")
+        self.account = account
 
     @property
     def actor(self):
@@ -285,6 +286,30 @@ class Comment(object):
         if self.permlink:
             return "%s/@%s/%s" % (
                 INTERFACE_LINK, self.author, self.permlink)
+
+    @property
+    def author_link(self):
+        return "%s/@%s" % (SITE_URL, self.author)
+
+    @property
+    def action(self):
+        if self.account != self.author:
+            author_template = '<a href="%s">%s</a>' % (
+                self.author_link, self.author)
+        else:
+            author_template = "%s" % self.author
+
+        if self.is_a_post:
+            display_permlink = self.permlink
+            action = "authored a post"
+        else:
+            display_permlink = self.parent_permlink
+            action = "replied to"
+
+        return '%s %s <a href="%s">%s</a>.' % (author_template,
+                                               action,
+                                               self.parent_link,
+                                               display_permlink)
 
 
 class CustomJson(object):
