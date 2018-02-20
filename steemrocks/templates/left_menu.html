@@ -60,7 +60,12 @@
             <h5><strong>Account creation date</strong></h5>
             <p>{{account.creation_date}}</p>
             <br>
-            <center><p><i>View on </i><a href="{{account.user_link}}">Steemit</a></p></center>
+            <center><p><i>View on </i></br>
+                <a href="https://steemit.com/@{{account.username}}">Steemit.com</a> |
+                <a href="https://busy.org/@{{account.username}}">Busy.org</a> |
+                <a href="https://utopian.io/@{{account.username}}">Utopian.io</a> |
+                <a href="https://d.tube/c/{{account.username}}">D.Tube</a>
+            </p></center>
 
         </div><!-- /profile-content -->
     </div>
