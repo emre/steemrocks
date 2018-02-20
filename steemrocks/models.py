@@ -800,7 +800,7 @@ class AuthorReward:
                 self.actor,
                 self.exact_action,
                 self.link,
-                self.raw_data["permlink"][0:8],
+                self.raw_data["permlink"],
                 Amount(self.raw_data["sbd_payout"]).amount,
                 Amount(self.raw_data["steem_payout"]).amount,
                 Amount(self.raw_data["vesting_payout"]).amount,
