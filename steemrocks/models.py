@@ -231,6 +231,8 @@ class Vote(object):
     def exact_action(self):
         if self.weight == 0:
             return "unvoted"
+        if self.weight < 0:
+            return "downvoted"
         return "upvoted"
 
     @property
