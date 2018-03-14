@@ -17,7 +17,7 @@ class TransactionListener(object):
         self.steem = steem
         self.db = get_db()
         self.thread_pool = concurrent.futures.ThreadPoolExecutor(
-            max_workers=8)
+            max_workers=multiprocessing.cpu_count() + 1)
 
     @property
     def properties(self):
@@ -55,7 +55,7 @@ class TransactionListener(object):
         if 'transactions' not in block_data:
             return
 
-        self.persist_block(block_data, block_num)
+        self.thread_pool.submit(self.persist_block, block_data, block_num)
         state.dump_state(self.properties)
 
     def run(self, start_from=None):
@@ -82,7 +82,7 @@ class TransactionListener(object):
         db = get_db(new=True)
 
         block = models.Block(db, block_num, block_data)
-        self.thread_pool.submit(block.persist)
+        block.persist()
         saved_txs = set()
         operation_data = self.steem.get_ops_in_block(
             block_num, virtual_only=False)
@@ -91,7 +91,7 @@ class TransactionListener(object):
             if operation["trx_id"] not in saved_txs:
                 transaction = models.Transaction(
                     db, block_num, operation["trx_id"])
-                self.thread_pool.submit(transaction.persist)
+                transaction.persist()
                 saved_txs.add(operation["trx_id"])
 
             op_type, op_value = operation['op'][0:2]
@@ -102,7 +102,7 @@ class TransactionListener(object):
                 block.created_at)
 
             if _operation.sub_operation:
-                self.thread_pool.submit(_operation.persist)
+                _operation.persist()
 
 
 def listen():

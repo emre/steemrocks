@@ -79,10 +79,15 @@ def rewards(username):
         ["@%s/%s" % (p["author"],
                      p["permlink"]) for p in posts_waiting_cashout])
 
+    print(posts_as_str)
     if posts_as_str:
 
+        import time as za
+        start = za.time()
         r = requests.post("http://estimator.steem.rocks/rewards.json",
                           data={"links": posts_as_str})
+        end = za.time()
+        print(end - start)
 
         rewards = r.json()["rewards"]
 
