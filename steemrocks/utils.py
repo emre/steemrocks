@@ -19,12 +19,15 @@ def connect_db():
     return conn
 
 
-def get_db():
+def get_db(new=False):
     """Opens a new database connection if there is none yet for the
     current application context.
     """
+    if new:
+        return connect_db()
     if not hasattr(g, 'mysql_db'):
         g.mysql_db = connect_db()
+
     return g.mysql_db
 
 

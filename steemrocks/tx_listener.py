@@ -1,6 +1,7 @@
 import logging
 import time
-import re
+import concurrent
+import multiprocessing
 
 from . import models, state
 from .utils import get_db, get_steem_conn
@@ -15,6 +16,8 @@ class TransactionListener(object):
     def __init__(self, steem):
         self.steem = steem
         self.db = get_db()
+        self.thread_pool = concurrent.futures.ThreadPoolExecutor(
+            max_workers=multiprocessing.cpu_count())
 
     @property
     def properties(self):
@@ -76,8 +79,10 @@ class TransactionListener(object):
             time.sleep(block_interval)
 
     def persist_block(self, block_data, block_num):
-        block = models.Block(self.db, block_num, block_data)
-        block.persist()
+        db = get_db(new=True)
+
+        block = models.Block(db, block_num, block_data)
+        self.thread_pool.submit(block.persist)
         saved_txs = set()
         operation_data = self.steem.get_ops_in_block(
             block_num, virtual_only=False)
@@ -85,48 +90,14 @@ class TransactionListener(object):
         for operation in operation_data:
             if operation["trx_id"] not in saved_txs:
                 transaction = models.Transaction(
-                    self.db, block_num, operation["trx_id"])
+                    db, block_num, operation["trx_id"])
                 transaction.persist()
                 saved_txs.add(operation["trx_id"])
 
             op_type, op_value = operation['op'][0:2]
 
-            if op_type == "comment":
-                mentions = re.findall(
-                    '@([a-z][a-z0-9\-]+[a-z0-9])', op_value.get("body", ""))
-                for effected in list(set(mentions)):
-                    effected = effected.replace("@", "")
-                    if "/" in effected:
-                        continue
-
-                    if not op_value.get("author") or \
-                            not op_value.get("permlink"):
-                        continue
-
-                    try:
-                        author = op_value.get("author")
-
-                        if effected == author:
-                            continue
-
-                        permlink = op_value.get("permlink")
-                        additional_op = models.Operation(
-                            self.db,
-                            transaction.id,
-                            "mention",
-                            {
-                                "author": author,
-                                "permlink": permlink,
-                                "effected": effected,
-                            },
-                            created_at=block.created_at,
-                        )
-                        additional_op.persist()
-                    except Exception as error:
-                        logger.error(error)
-
             _operation = models.Operation(
-                self.db, transaction.id,
+                db, transaction.id,
                 op_type, op_value,
                 block.created_at)
 

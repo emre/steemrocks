@@ -704,7 +704,7 @@ class Resteem:
 
     @property
     def effected(self):
-        return self.raw_data["author"]
+        return self.raw_data.get("author")
 
     @property
     def action(self):
