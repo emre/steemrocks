@@ -17,7 +17,7 @@ class TransactionListener(object):
         self.steem = steem
         self.db = get_db()
         self.thread_pool = concurrent.futures.ThreadPoolExecutor(
-            max_workers=multiprocessing.cpu_count())
+            max_workers=8)
 
     @property
     def properties(self):
