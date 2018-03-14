@@ -91,7 +91,7 @@ class TransactionListener(object):
             if operation["trx_id"] not in saved_txs:
                 transaction = models.Transaction(
                     db, block_num, operation["trx_id"])
-                transaction.persist()
+                self.thread_pool.submit(transaction.persist)
                 saved_txs.add(operation["trx_id"])
 
             op_type, op_value = operation['op'][0:2]
@@ -102,7 +102,7 @@ class TransactionListener(object):
                 block.created_at)
 
             if _operation.sub_operation:
-                _operation.persist()
+                self.thread_pool.submit(_operation.persist)
 
 
 def listen():
