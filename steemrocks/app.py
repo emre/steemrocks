@@ -7,7 +7,7 @@ from steem.account import Account as SteemAccount
 from steem.amount import Amount
 from .utils import (
     get_steem_conn, Pagination, vests_to_sp, get_curation_rewards,
-    get_mongo_conn
+    get_mongo_conn, op_types
 )
 from .settings import SITE_URL
 from . import state
@@ -141,6 +141,13 @@ def rewards(username):
 def profile(username, page):
     if username.startswith("@"):
         username = username.replace("@", "")
+
+    op_type = None
+    if request.query_string and request.args.get('op_type'):
+        op_type = request.args.get("op_type")
+        if op_type not in op_types:
+            op_type = None
+
     account = Account(username, get_steem_conn()).set_account_deta()
     if not account.account_data:
         abort(404)
@@ -149,11 +156,13 @@ def profile(username, page):
     start = page * PER_PAGE
     pagination = Pagination(page, PER_PAGE, account.get_operation_count())
 
-    operations = account.get_operations(start=start, end=PER_PAGE)
+    operations = account.get_operations(start=start, end=PER_PAGE, op_type=op_type)
 
     return render_template(
         'profile.html', account=account,
-        operations=operations, site_url=SITE_URL, pagination=pagination)
+        operations=operations,
+        site_url=SITE_URL, pagination=pagination,
+        op_type=op_type, op_types=op_types)
 
 
 @app.route('/<username>/curation_rewards')

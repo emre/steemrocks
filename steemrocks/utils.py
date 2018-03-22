@@ -148,3 +148,20 @@ def hbytes(num):
             return "%3.1f%s" % (num, x)
         num /= 1024.0
     return "%3.1f%s" % (num, 'TB')
+
+
+op_types = [
+    "vote",
+    "comment",
+    "custom_json",
+    "transfer",
+    "delegate_vesting_shares",
+    "claim_reward_balance",
+    "account_witness_vote",
+    "author_reward",
+    "curation_reward",
+    "return_vesting_delegation",
+    "feed_publish",
+    "delete_comment",
+    "account_create_with_delegation",
+]
