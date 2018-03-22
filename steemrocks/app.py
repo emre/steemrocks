@@ -20,7 +20,7 @@ import requests
 
 app = Flask(__name__)
 
-PER_PAGE = 2
+PER_PAGE = 30
 
 
 @app.cli.command()
@@ -290,7 +290,6 @@ def close_db(error):
 
 def url_for_other_page(page):
     args = request.view_args.copy()
-    print(args)
     args['page'] = page
     return url_for(request.endpoint, **args)
 
