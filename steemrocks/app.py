@@ -154,7 +154,7 @@ def profile(username, page):
 
     page = page - 1
     start = page * PER_PAGE
-    pagination = Pagination(page, PER_PAGE, account.get_operation_count())
+    pagination = Pagination(page, PER_PAGE, account.get_operation_count(op_type=op_type))
 
     operations = account.get_operations(start=start, end=PER_PAGE, op_type=op_type)
 
