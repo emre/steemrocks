@@ -620,20 +620,31 @@ class Account:
             (Amount(info["total_vesting_shares"]).amount / 1e6)
         )
 
-    def get_operation_count(self):
+    def get_operation_count(self, op_type=None):
         query = 'SELECT COUNT(*) as total FROM operations where ' \
                 'actor=%s or effected=%s'
         cursor = self.db_conn.cursor()
         cursor.execute(query, (self.username, self.username))
         return cursor.fetchone()["total"]
 
-    def get_operations(self, start=0, end=0):
-        query = 'SELECT * FROM operations where ' \
-                'actor=%s or effected=%s ORDER BY created_at ' \
-                'DESC LIMIT %s, %s'
+    def get_operations(self, start=0, end=0, op_type=None):
+        if not op_type:
+            query = 'SELECT * FROM operations where ' \
+                    '(actor=%s or effected=%s) ORDER BY created_at ' \
+                    'DESC LIMIT %s, %s'
+            cursor = self.db_conn.cursor()
+            cursor.execute(
+                query, (self.username, self.username, start, end)
+            )
+        else:
+            query = 'SELECT * FROM operations where ' \
+                    '(actor=%s or effected=%s) and type=%s ORDER BY created_at ' \
+                    'DESC LIMIT %s, %s'
+            cursor = self.db_conn.cursor()
+            cursor.execute(
+                query, (self.username, self.username, op_type, start, end)
+            )
 
-        cursor = self.db_conn.cursor()
-        cursor.execute(query, (self.username, self.username, start, end))
         operations = []
         for op in cursor:
             operations.append(Operation(

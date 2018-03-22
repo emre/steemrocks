@@ -6,7 +6,18 @@
 
     <div class="col-md-8">
     <div class="panel panel-default">
-    <div class="panel-heading"><strong>Activity</strong> | <strong><a href="/{{account.account_data.name}}/rewards">Potential Rewards</a></strong></div>
+    <div class="panel-heading"><strong>Activity</strong> | <strong><a href="/{{account.account_data.name}}/rewards">Potential Rewards</a></strong>
+        <span class="pull-right">
+            <form method="GET">
+            <select name="op_type">
+              <option value="">All</option>
+              {% for filter_type in op_types %}
+              <option value="{{ filter_type }}" {% if filter_type == op_type %}selected="selected"{% endif %}>{{ filter_type }}</option>
+              {% endfor %}
+            </select>
+                <input type="submit" value="Filter">
+            </form>
+        </span></div>
     <div class="panel-body">
 
         <div class="ibox-content">
