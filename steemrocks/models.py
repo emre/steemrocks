@@ -621,10 +621,15 @@ class Account:
         )
 
     def get_operation_count(self, op_type=None):
-        query = 'SELECT COUNT(*) as total FROM operations where ' \
-                'actor=%s or effected=%s'
         cursor = self.db_conn.cursor()
-        cursor.execute(query, (self.username, self.username))
+        if not op_type:
+            query = 'SELECT COUNT(*) as total FROM operations where ' \
+                    'actor=%s or effected=%s'
+            cursor.execute(query, (self.username, self.username))
+        else:
+            query = 'SELECT COUNT(*) as total FROM operations where ' \
+                    '(actor=%s or effected=%s) and type=%s'
+            cursor.execute(query, (self.username, self.username, op_type))
         return cursor.fetchone()["total"]
 
     def get_operations(self, start=0, end=0, op_type=None):
