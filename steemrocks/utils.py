@@ -13,6 +13,7 @@ from . import settings
 _steem_connection = None
 _mongo_connection = None
 
+
 def connect_db():
     conn = pymysql.connect(*settings.DB_INFO, charset='utf8')
     conn.cursorclass = pymysql.cursors.DictCursor
@@ -41,13 +42,11 @@ def get_steem_conn():
 def get_mongo_conn():
     global _mongo_connection
     if not _mongo_connection:
-        _mongo_connection = MongoClient(
-            'mongo1.steemdata.com',
-             username='steemit',
-             password='steemit',
-             authSource='SteemData',
-             authMechanism='SCRAM-SHA-1'
-        )
+        _mongo_connection = MongoClient('mongo1.steemdata.com',
+                                        username='steemit',
+                                        password='steemit',
+                                        authSource='SteemData',
+                                        authMechanism='SCRAM-SHA-1')
     return _mongo_connection
 
 
@@ -75,7 +74,7 @@ class Pagination(object):
         last = 0
         for num in range(1, self.pages + 1):
             if num <= left_edge or \
-               (num > self.page - left_current - 1 and \
+               (num > self.page - left_current - 1 and
                 num < self.page + right_current) or \
                num > self.pages - right_edge:
                 if last + 1 != num:
@@ -87,9 +86,9 @@ class Pagination(object):
 class Coins(object):
 
     def request_coins(self, name):
-        base="https://min-api.cryptocompare.com/data/price?fsym="
-        compare="&tsyms=BTC,USD,EUR,ETH,LTC"
-        url=base+name+compare
+        base = "https://min-api.cryptocompare.com/data/price?fsym="
+        compare = "&tsyms=BTC,USD,EUR,ETH,LTC"
+        url = base+name+compare
         c = (requests.get(url)).text
         return json.loads(c)
 
@@ -143,7 +142,7 @@ def get_curation_rewards(account, info, checkpoint_val=100):
 
 
 def hbytes(num):
-    for x in ['bytes','KB','MB','GB']:
+    for x in ['bytes', 'KB', 'MB', 'GB']:
         if num < 1024.0:
             return "%3.1f%s" % (num, x)
         num /= 1024.0

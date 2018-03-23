@@ -110,4 +110,3 @@ def listen():
     steem = get_steem_conn()
     tx_listener = TransactionListener(steem)
     tx_listener.run()
-

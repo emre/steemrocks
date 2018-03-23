@@ -57,7 +57,6 @@ class Transaction(object):
         if self.id == "0000000000000000000000000000000000000000":
             self.id = "vop-%s" % str(uuid.uuid4())
 
-
     def persist(self):
         cursor = self.db_conn.cursor()
         dumped_raw_data = json.dumps(self.raw_data)
@@ -113,7 +112,7 @@ class Operation(object):
         elif self.type == "custom_json":
             try:
                 raw_data = json.loads(self.raw_data["json"])
-            except Exception as e:
+            except Exception:
                 logger.error(self.raw_data["json"])
                 return
             if raw_data and len(raw_data) == 2:
@@ -280,6 +279,10 @@ class Comment(object):
         return self.parent_author == ""
 
     @property
+    def is_an_edit(self):
+        return self.body.startswith("@@ ")
+
+    @property
     def is_a_comment(self):
         return not self.is_a_post
 
@@ -303,10 +306,16 @@ class Comment(object):
 
         if self.is_a_post:
             display_permlink = self.permlink
-            action = "authored a post"
+            if self.is_an_edit:
+                action = "edited a post"
+            else:
+                action = "authored a post"
         else:
             display_permlink = self.parent_permlink
-            action = "replied to"
+            if self.is_an_edit:
+                action = "edited a reply to"
+            else:
+                action = "replied to"
 
         return '%s %s <a href="%s">%s</a>.' % (author_template,
                                                action,
@@ -483,10 +492,10 @@ class Account:
     @property
     def voting_power(self):
         last_vote_time = parse(self.account_data["last_vote_time"])
-        diff_in_seconds = (datetime.utcnow() - last_vote_time).seconds
+        diff_in_seconds = (datetime.utcnow() - last_vote_time).total_seconds()
         regenerated_vp = diff_in_seconds * 10000 / 86400 / 5
-        total_vp = (
-                   self.account_data["voting_power"] + regenerated_vp) / 100
+        total_vp = (self.account_data["voting_power"] +
+                    regenerated_vp) / 100
         if total_vp > 100:
             total_vp = 100
 
@@ -532,8 +541,8 @@ class Account:
 
         used_bandwidth = 0
         if diff < total_seconds:
-            used_bandwidth = (((total_seconds - diff)
-                               * average_bandwidth) / total_seconds)
+            used_bandwidth = (((total_seconds - diff) *
+                               average_bandwidth) / total_seconds)
 
         used_bandwidth = used_bandwidth / 1000000
         allocated_bandwidth = allocated_bandwidth / 1000000
@@ -545,7 +554,7 @@ class Account:
         max_reserve_ratio = 200000000
 
         bandwidth_on_max_capacity = allocated_bandwidth * \
-                                    (max_reserve_ratio / current_reserve_ratio)
+            (max_reserve_ratio / current_reserve_ratio)
 
         left_bw = int(allocated_bandwidth - used_bandwidth)
         if left_bw < 0:
@@ -590,18 +599,18 @@ class Account:
         s = get_steem_conn()
         info = state.load_state()
         p = 10000
-        sp = self.total_sp # steem power
-        vp = 100 # voting power
-        vw = 100 # voting weight
-        tvf = float(info['total_vesting_fund_steem'].replace(" STEEM", ""))
-        tvs = float(info['total_vesting_shares'].replace(" VESTS", ""))
+        sp = self.total_sp  # steem power
+        vp = 100  # voting power
+        vw = 100  # voting weight
+        tvf = Amount(info['total_vesting_fund_steem']).amount
+        tvs = Amount(info['total_vesting_shares']).amount
         r = float(sp / (tvf / tvs))
         m = float(100 * vp * (100 * vw) / p)
         m = float((m + 49) / 50)
-        quote = float(s.get_current_median_history_price()['quote'].replace(" STEEM", ""))
-        base = float(s.get_current_median_history_price()['base'].replace(" SBD", ""))
+        quote = Amount(s.get_current_median_history_price()['quote']).amount
+        base = Amount(s.get_current_median_history_price()['base']).amount
         o = base / quote
-        rb = float(s.get_reward_fund('post')['reward_balance'].replace(" STEEM", ""))
+        rb = Amount(s.get_reward_fund('post')['reward_balance']).amount
         rc = float(s.get_reward_fund('post')['recent_claims'])
         i = rb / rc
         return "%.4f" % (r * m * 100 * i * o)
@@ -643,8 +652,8 @@ class Account:
             )
         else:
             query = 'SELECT * FROM operations where ' \
-                    '(actor=%s or effected=%s) and type=%s ORDER BY created_at ' \
-                    'DESC LIMIT %s, %s'
+                    '(actor=%s or effected=%s) and type=%s ' \
+                    'ORDER BY created_at DESC LIMIT %s, %s'
             cursor = self.db_conn.cursor()
             cursor.execute(
                 query, (self.username, self.username, op_type, start, end)
@@ -668,6 +677,7 @@ class Account:
     @property
     def user_link(self):
         return "%s/@%s" % (INTERFACE_LINK, self.username)
+
 
 class Delegate:
 
@@ -814,15 +824,12 @@ class AuthorReward:
     @property
     def action(self):
         return '%s got %s for <a href="%s">%s</a>. ' \
-               '<br>%s sbd, %s steem, %.2f vests.' % (
-                self.actor,
-                self.exact_action,
-                self.link,
+               '<br>%s sbd, %s steem, %.2f vests.' % \
+               (self.actor, self.exact_action, self.link,
                 self.raw_data["permlink"],
                 Amount(self.raw_data["sbd_payout"]).amount,
                 Amount(self.raw_data["steem_payout"]).amount,
-                Amount(self.raw_data["vesting_payout"]).amount,
-        )
+                Amount(self.raw_data["vesting_payout"]).amount)
 
 
 class CommentReward(AuthorReward):

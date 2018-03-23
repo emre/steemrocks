@@ -10,11 +10,11 @@ logging.basicConfig()
 def gc():
     db = get_db()
     cursor = db.cursor()
-    query = "SELECT MIN(id) AS minimum_id FROM operations";
+    query = "SELECT MIN(id) AS minimum_id FROM operations"
     cursor.execute(query)
     min_id = cursor.fetchone()["minimum_id"]
 
-    query = "SELECT MAX(id) AS maximum_id FROM operations";
+    query = "SELECT MAX(id) AS maximum_id FROM operations"
     cursor.execute(query)
     max_id = cursor.fetchone()["maximum_id"]
 
@@ -23,9 +23,3 @@ def gc():
         cursor.execute("DELETE FROM operations WHERE id = %s", i)
         db.commit()
         print("deleted", i)
-
-
-
-
-
-

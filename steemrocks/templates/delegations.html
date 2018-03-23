@@ -29,9 +29,7 @@
                       <tbody>
                       {% for delegation in outgoing_delegations%}
                        <tr>
-                          <td>
-                              <a href="https://steemit.com/@{{delegation.delegatee}}"
-                                 target="_blank">@{{delegation.delegatee}}</a></td>
+                          <td><a href="/{{delegation.delegatee}}">@{{delegation.delegatee}}</a></td>
                           <td>{{delegation.vesting_shares}}</td>
                           <td>{{delegation.sp}}</td>
                           <td>{{delegation.min_delegation_time}}</td>
