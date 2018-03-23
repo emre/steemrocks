@@ -280,6 +280,10 @@ class Comment(object):
         return self.parent_author == ""
 
     @property
+    def is_an_edit(self):
+        return self.body.startswith("@@ ")
+
+    @property
     def is_a_comment(self):
         return not self.is_a_post
 
@@ -303,10 +307,16 @@ class Comment(object):
 
         if self.is_a_post:
             display_permlink = self.permlink
-            action = "authored a post"
+            if self.is_an_edit:
+                action = "edited a post"
+            else:
+                action = "authored a post"
         else:
             display_permlink = self.parent_permlink
-            action = "replied to"
+            if self.is_an_edit:
+                action = "edited a reply to"
+            else:
+                action = "replied to"
 
         return '%s %s <a href="%s">%s</a>.' % (author_template,
                                                action,
