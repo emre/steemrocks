@@ -32,6 +32,7 @@ def listen_transactions():
     """
     listen()
 
+
 @app.cli.command()
 def garbage_collector():
     """
@@ -40,6 +41,7 @@ def garbage_collector():
     $ flask listen_transactions
     """
     gc()
+
 
 @app.route('/')
 def index():
@@ -154,9 +156,11 @@ def profile(username, page):
 
     page = page - 1
     start = page * PER_PAGE
-    pagination = Pagination(page, PER_PAGE, account.get_operation_count(op_type=op_type))
+    pagination = Pagination(page, PER_PAGE,
+                            account.get_operation_count(op_type=op_type))
 
-    operations = account.get_operations(start=start, end=PER_PAGE, op_type=op_type)
+    operations = account.get_operations(start=start, end=PER_PAGE,
+                                        op_type=op_type)
 
     return render_template(
         'profile.html', account=account,
@@ -185,6 +189,7 @@ def curation_rewards(username):
         total_rshares=total_rshares,
         checkpoints=checkpoints,
     )
+
 
 @app.route('/<username>/delegations/out')
 @app.route('/@<username>/delegations/out')
@@ -231,6 +236,7 @@ def delegations(username):
         expiring_delegations=expiring_delegations,
     )
 
+
 @app.route('/<username>/delegations/in')
 @app.route('/@<username>/delegations/in')
 def incoming_delegations(username):
@@ -269,6 +275,7 @@ def incoming_delegations(username):
         incoming_delegations=incoming_delegations,
         account=account,
     )
+
 
 @app.route('/<username>/bandwidth')
 @app.route('/@<username>/bandwidth')
