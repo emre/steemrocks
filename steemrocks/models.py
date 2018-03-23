@@ -493,10 +493,10 @@ class Account:
     @property
     def voting_power(self):
         last_vote_time = parse(self.account_data["last_vote_time"])
-        diff_in_seconds = (datetime.utcnow() - last_vote_time).seconds
+        diff_in_seconds = (datetime.utcnow() - last_vote_time).total_seconds()
         regenerated_vp = diff_in_seconds * 10000 / 86400 / 5
-        total_vp = (
-                   self.account_data["voting_power"] + regenerated_vp) / 100
+        total_vp = (self.account_data["voting_power"] +
+                    regenerated_vp) / 100
         if total_vp > 100:
             total_vp = 100
 
