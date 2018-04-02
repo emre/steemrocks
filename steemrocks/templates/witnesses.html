@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div id="pad-wrapper">
+
+    <div class="col-md-12">
+    <div class="panel panel-default">
+        <div class="panel-heading"><strong>Witnesses</strong></div>
+    <div class="panel-body">
+
+<table class="table table-sm" id="witnesses">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Witness</th>
+      <th scope="col">Votes</th>
+      <th scope="col">URL</th>
+      <th scope="col">Total Missed</th>
+      <th scope="col">Last Block</th>
+      <th scope="col">Account Fee</th>
+      <th scope="col">Max. Block Size</th>
+      <th scope="col">SBD interest rate</th>
+      <th scope="col">Price<Feed></Feed></th>
+      <th scope="col">Version <Feed></Feed></th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for witness in witnesses %}
+    <tr>
+      <th scope="row">{{ witness.rank }}</th>
+        <td><a href="https://steemit.com/@{{ witness.owner }}">{% if not witness.active %}<del><i style="color:red;">{{ witness.owner }}</i></del>{% else %}<strong>{{ witness.owner }}</strong>{% endif %}</a></td>
+      <td><i>{{ witness.votes_in_mv }}</i> MV</td>
+        <td><a href="{{ witness.url }}">link</a></td>
+      <td>{{ witness.total_missed }}</td>
+        <td><a href="https://steemd.com/b/{{ witness.last_confirmed_block_num }}">
+            {{ witness.last_confirmed_block_num }}</a></td>
+      <td><i>{{ witness.props.account_creation_fee }}</i></td>
+        <td><i>{{ witness.props.maximum_block_size }}</i></td>
+      <td><i>%{{ witness.props.sbd_interest_rate }} APR</i></td>
+      <td>{% if witness.price_uptodate %}{{ witness.price }} {% else %}-{% endif %}</td>
+      <td>{{ witness.running_version }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+    </div>
+    </div>
+    </div>
+
+<script>
+$(document).ready(function() {
+  $('#witnesses').DataTable({
+      "iDisplayLength": 200
+  });
+});
+</script>
+
+
+{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+<link href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css    " rel="stylesheet">
+
+
+{% endblock %}

@@ -7,7 +7,7 @@ from steem.account import Account as SteemAccount
 from steem.amount import Amount
 from .utils import (
     get_steem_conn, Pagination, vests_to_sp, get_curation_rewards,
-    get_mongo_conn, op_types
+    get_mongo_conn, op_types, prepare_witness_leaderboard, get_witness_list
 )
 from .settings import SITE_URL
 from . import state
@@ -41,6 +41,11 @@ def garbage_collector():
     $ flask listen_transactions
     """
     gc()
+
+
+@app.cli.command()
+def witness_leaderboard():
+    prepare_witness_leaderboard()
 
 
 @app.route('/')
@@ -288,6 +293,12 @@ def bandwidth(username):
     return render_template("bandwidth.html", account=account)
 
 
+@app.route('/witnesses')
+def witnesses():
+
+    return render_template("witnesses.html", witnesses=get_witness_list())
+
+
 @app.teardown_appcontext
 def close_db(error):
     """Closes the database again at the end of the request."""
@@ -303,6 +314,7 @@ def url_for_other_page(page):
 
 def strip_tags(text):
     return bleach.clean(text, tags=["strong", "a", "i", "small", "br"])
+
 
 app.jinja_env.globals['url_for_other_page'] = url_for_other_page
 app.jinja_env.globals['clean'] = strip_tags
