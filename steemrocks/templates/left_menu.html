@@ -67,7 +67,33 @@
                 <a href="https://d.tube/c/{{account.username}}">D.Tube</a>
             </p></center>
 
+
         </div><!-- /profile-content -->
     </div>
+
+
     </div>
+
+    <div class="panel panel-default">
+    <div class="panel-heading">Witness Votes</div>
+    <div class="panel-body no-padding">
+        <div class="ibox-content profile-content">
+            {% for witness in account.account_data.witness_votes %}
+                <li><a href="https://steem.rocks/@{{ witness }}">{{ witness }}</a></li>
+            {% endfor %}
+
+            {% if account.account_data.proxy %}
+            {{ account.username }} uses
+                <a href="https://steem.rocks/@{{ account.account_data.proxy }}">{{ account.account_data.proxy }}</a>
+                as a voting proxy.{% endif %}
+
+        </div><!-- /profile-content -->
     </div>
+
+    </div>
+
+    </div>
+
+
+
+
