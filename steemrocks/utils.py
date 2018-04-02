@@ -1,5 +1,6 @@
 from math import ceil
 
+import redis
 import json
 import requests
 import pymysql
@@ -7,11 +8,15 @@ from flask import g
 from steem import Steem
 from steem.amount import Amount
 from pymongo import MongoClient
+from dateutil.parser import parse
+from datetime import datetime
 
 from . import settings
 
 _steem_connection = None
 _mongo_connection = None
+_redis_connection = None
+
 
 
 def connect_db():
@@ -48,6 +53,57 @@ def get_mongo_conn():
                                         authSource='SteemData',
                                         authMechanism='SCRAM-SHA-1')
     return _mongo_connection
+
+
+def get_redis_conn():
+    global _redis_connection
+    if not _redis_connection:
+        _redis_connection = redis.StrictRedis(host='localhost', port=6379, db=0)
+
+    return _redis_connection
+
+
+def prepare_witness_leaderboard():
+    s = get_steem_conn()
+    r = get_redis_conn()
+    witness_list = []
+    rank = 0
+    for witness in s.get_witnesses_by_vote("", 400):
+        active = True
+        if witness.get("signing_key") == "STM1111111111111111111111111111111114T1Anm":
+            active = False
+        price_uptodate = True
+        last_price_update = witness.get("last_sbd_exchange_update")
+        if last_price_update:
+            last_price_update = parse(last_price_update)
+            if (datetime.utcnow() - last_price_update).total_seconds() / 3600 > 12:
+                price_uptodate = False
+
+        rank += 1
+        witness.update({
+            "rank": rank,
+            "votes_in_mv": int(int(witness["votes"]) / 1000000000000),
+            "price_uptodate": price_uptodate,
+            "active": active,
+        })
+
+        price = "-"
+        if witness.get("sbd_exchange_rate", {}).get("base"):
+            price_in_float = Amount(witness.get("sbd_exchange_rate").get("base")).amount
+            price = "$%s" % price_in_float
+
+        witness.update({
+            "price": price,
+        })
+
+        witness_list.append(witness)
+
+    r.set("witnesses", json.dumps(witness_list))
+
+
+def get_witness_list():
+    r = get_redis_conn()
+    return json.loads(r.get("witnesses"))
 
 
 class Pagination(object):
